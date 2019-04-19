@@ -1,0 +1,68 @@
+{
+  "name": "shopmate-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "watch": {
+    "dev": "server/**/*.js"
+  },
+  "scripts": {
+    "babel-node": "babel-node --presets=env",
+    "babel-watch": "babel-watch server/index.js",
+    "dev": "cross-env process.env.NODE_ENV=development npm run eslint && npm run babel-node server/index.js",
+    "eslint": "eslint . --fix --ignore-path .gitignore",
+    "migrate-undo": "sequelize db:migrate:undo:all",
+    "migrate": "sequelize db:migrate",
+    "migrate-reset": "sequelize db:migrate:undo:all && sequelize db:migrate",
+    "start": "npm run migrate && node build/index.js",
+    "test": "npm run test",
+    "watch": "npm-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kampkelly/shopmate-backend.git"
+  },
+  "author": "Runor",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.1",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "cross-env": "^5.2.0",
+    "dotenv": "^6.0.0",
+    "errorhandler": "^1.5.0",
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "express": "^4.16.3",
+    "express-jwt": "^5.3.1",
+    "express-session": "^1.15.6",
+    "faker": "^4.1.0",
+    "jsonwebtoken": "^8.3.0",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.5",
+    "npm-watch": "^0.4.0",
+    "request": "^2.87.0",
+    "sequelize": "^4.39.0",
+    "sequelize-cli": "^4.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-airbnb": "^2.5.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "babel-watch": "^2.0.7",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "coveralls": "^3.0.2",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.7",
+    "nyc": "^13.0.1"
+  },
+  "bugs": {
+    "url": "https://github.com/kampkelly/shopmate-backend/issues"
+  },
+  "homepage": "https://github.com/kampkelly/shopmate-backend#readme"
+}
