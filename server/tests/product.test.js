@@ -40,4 +40,27 @@ describe('Products', () => {
         done();
       });
   });
+
+  it('Should get products in a category', (done) => {
+    chai.request(app)
+      .get('/products/inCategory/1')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.count).to.be.a('number');
+        expect(res.body.rows).to.an('array');
+        done();
+      });
+  });
+
+  it('Should show 404 if no category', (done) => {
+    chai.request(app)
+      .get('/products/inCategory/1000')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body).to.be.an('object');
+        expect(res.body.message).to.include('Category cannot be found');
+        done();
+      });
+  });
 });

@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import Model from '../models';
 
 const {
-  Product
+  Category, Product
 } = Model;
 
 /**
@@ -73,6 +73,45 @@ export default class ProductController {
         res.status(404).json({ product, message: 'Product cannot be found' });
       } else {
         res.status(200).json(product);
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+
+  /**
+    * @description -This method gets products in a category
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - products in category
+    */
+  static async getProductsInCategory(req, res) {
+    try {
+      const { categoryId } = req.params;
+      const query = {
+        where: { category_id: categoryId },
+        attributes: [
+          'category_id'
+        ],
+        include: [{
+          model: Product,
+          attributes: [
+            'product_id',
+            'name',
+            'description',
+            'price',
+            'discounted_price',
+            'thumbnail'
+          ],
+          through: { attributes: [] },
+        }]
+      };
+      const category = await Category.findOne(query);
+      if (!category) {
+        res.status(404).json({ category, message: 'Category cannot be found' });
+      } else {
+        const count = category.Products.length;
+        res.status(200).json({ count, rows: category.Products });
       }
     } catch (error) {
       res.status(500).json(error);
