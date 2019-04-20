@@ -5,6 +5,7 @@ import fs from 'fs';
 import logger from 'morgan';
 import errorhandler from 'errorhandler';
 import dotenv from 'dotenv';
+import indexRouter from './routes/index';
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use(session({
   saveUninitialized: true
 }));
 
+/* Index router */
+app.use('/', indexRouter);
 
 if (!isProduction) {
   app.use(errorhandler());
