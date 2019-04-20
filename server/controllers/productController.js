@@ -45,4 +45,37 @@ export default class ProductController {
       res.status(500).json(error);
     }
   }
+
+  /**
+    * @description -This method views a single product
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - product
+    */
+  static async viewSingleProduct(req, res) {
+    try {
+      const { productId } = req.params;
+      const product = await Product.findOne({
+        where: { product_id: productId },
+        attributes: [
+          'product_id',
+          'name',
+          'description',
+          'price',
+          'discounted_price',
+          'image',
+          'image_2',
+          'thumbnail',
+          'display'
+        ]
+      });
+      if (!product) {
+        res.status(404).json({ product, message: 'Product cannot be found' });
+      } else {
+        res.status(200).json(product);
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
 }
