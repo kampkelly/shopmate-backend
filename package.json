@@ -39,7 +39,7 @@
     "express-jwt": "^5.3.1",
     "express-session": "^1.15.6",
     "faker": "^4.1.0",
-    "jsonwebtoken": "^8.3.0",
+    "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
     "mysql2": "^1.6.5",
     "npm-watch": "^0.4.0",
