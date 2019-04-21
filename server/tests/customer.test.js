@@ -24,6 +24,18 @@ const invalidCustomer = {
   password: 'Pass'
 };
 
+const loginInvalidEmail = {
+  email: 'fake@hotmail.com',
+  userName: 'testuser',
+  password: 'Password1!'
+};
+
+const loginInvalidDetails = {
+  email: 'fake@hotmail.com',
+  userName: 'testuser',
+  pass: 'Pass'
+};
+
 
 describe('Customers', () => {
   it('Should register customer', (done) => {
@@ -84,12 +96,26 @@ describe('Customers', () => {
   it('Should not login a customer if email does not exist', (done) => {
     chai.request(app)
       .post('/customers/login')
-      .send(invalidCustomer)
+      .send(loginInvalidEmail)
       .end((err, res) => {
         expect(res.status).to.equal(401);
         expect(res.body).to.be.an('object');
         expect(res.body.success).to.equal(false);
         expect(res.body.message).to.equal('Invalid email or password');
+        done();
+      });
+  });
+
+  it('Should not login a customer on bad requests', (done) => {
+    chai.request(app)
+      .post('/customers/login')
+      .send(loginInvalidDetails)
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.body).to.be.an('object');
+        expect(res.body.message).to.be.an('array');
+        expect(res.body.message[0]).to.include('Password is required');
+        expect(res.body.message[1]).to.include('Password must be a string');
         done();
       });
   });
