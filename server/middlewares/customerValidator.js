@@ -8,7 +8,25 @@ export default {
     if (typeof email !== 'string') errors.push('Email must be a string');
     if (typeof name !== 'string') errors.push('Name must be a string');
     if (typeof password !== 'string') errors.push('Password must be a string');
-    if (password.length < 6) errors.push('Password must be at least 6 characters');
+    if (password) {
+      if (password.length < 6) errors.push('Password must be at least 6 characters');
+    }
+    if (!errors.length) {
+      return next();
+    }
+    if (errors.length) res.status(400).json({ message: errors });
+  },
+
+  loginValidator(req, res, next) {
+    const { email, password } = req.body;
+    const errors = [];
+    if (!email) errors.push('Email is required');
+    if (!password) errors.push('Password is required');
+    if (typeof email !== 'string') errors.push('Email must be a string');
+    if (typeof password !== 'string') errors.push('Password must be a string');
+    if (password) {
+      if (password.length < 6) errors.push('Password must be at least 6 characters');
+    }
     if (!errors.length) {
       return next();
     }
