@@ -6,5 +6,6 @@ const { registerValidator } = customerValidator;
 
 const router = express.Router();
 router.post('/customers', registerValidator, CustomerController.RegisterCustomer);
+router.post('/customers/login', CustomerController.LoginCustomer);
 
 export default router;
