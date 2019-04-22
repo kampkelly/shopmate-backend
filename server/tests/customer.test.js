@@ -6,6 +6,7 @@ import app from '../index';
 
 chai.use(chaiHttp);
 
+const validToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJuYW1lIjoia2FtcCIsImVtYWlsIjoia2FtcEBleGFtcGxlLmNvbSJ9LCJpYXQiOjE1NTU5MjYyMDgsImV4cCI6MTU1NjAxMjYwOH0.zbLB-8oR6LLqCcZ58AAh9sfDfS1m-3gh32-kRBP542w';
 const customer = {
   email: faker.internet.email().toLowerCase(),
   name: 'testuser',
@@ -16,6 +17,16 @@ const existingCustomer = {
   email: 'mack41@hotmail.com',
   name: 'testuser',
   password: 'Password1!'
+};
+
+const customerAddressInfo = {
+  address_1: 'Lagos',
+  address_2: 'Lagos City',
+  city: 'Lagos',
+  region: 'West',
+  postal_code: '100001',
+  country: 'Nigeria',
+  shipping_region_id: 2
 };
 
 const invalidCustomer = {
@@ -116,6 +127,20 @@ describe('Customers', () => {
         expect(res.body.message).to.be.an('array');
         expect(res.body.message[0]).to.include('Password is required');
         expect(res.body.message[1]).to.include('Password must be a string');
+        done();
+      });
+  });
+
+  it('Should update a customer', (done) => {
+    chai.request(app)
+      .put('/customers/address')
+      .set('Authorization', validToken)
+      .send(customerAddressInfo)
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.name).to.be.a('string');
+        expect(res.body.email).to.be.equal('kamp@example.com');
         done();
       });
   });
