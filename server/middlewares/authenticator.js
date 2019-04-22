@@ -10,16 +10,21 @@ export default {
   },
 
   confirmToken(req, res, next) {
-    const token = req.headers['x-access-token'] || req.headers.authorization;
+    let token = req.headers['x-access-token'] || req.headers.authorization;
     if (!token) {
       res.status(403).json({ success: false, message: 'Missing Token' });
     } else {
+      if (token.split(' ')[0] !== 'Bearer') {
+        res.status(403).json({ success: false, message: 'Invalid token supplied' });
+      }
+      // eslint-disable-next-line
+      token = token.split(' ')[1];
       jwt.verify(token, process.env.JWTKEY, (err, decoded) => {
         if (err) {
           if (err.message.includes('signature')) {
-            res.status(403).json({ message: 'Invalid token supplied' });
+            res.status(403).json({ success: false, message: 'Invalid token supplied' });
           } else {
-            res.status(403).json({ message: err });
+            res.status(403).json({ success: false, message: err });
           }
         }
         req.user = decoded.user;

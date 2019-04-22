@@ -98,4 +98,21 @@ export default class CustomerController {
       res.status(500).json({ success: false, message: 'An error occured' });
     }
   }
+
+  /**
+    * @description -This method updates a customer's address
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - customer
+    */
+  static async UpdateCustomerAddress(req, res) {
+    try {
+      const { email } = req.user;
+      const customer = await Customer.findOne({ where: { email } });
+      const updatedCustomer = await customer.update(req.body);
+      return res.status(200).json(updatedCustomer);
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'An error occured' });
+    }
+  }
 }
