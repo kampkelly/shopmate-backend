@@ -17,4 +17,15 @@ describe('Shopping Cart', () => {
         done();
       });
   });
+
+  it('Should get products in cart', (done) => {
+    chai.request(app)
+      .get('/shoppingcart/1cc')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('array');
+        expect(res.body[0].item_id).to.be.an('number');
+        done();
+      });
+  });
 });
