@@ -5,6 +5,8 @@ import fs from 'fs';
 import logger from 'morgan';
 import errorhandler from 'errorhandler';
 import dotenv from 'dotenv';
+import passport from 'passport';
+import facebookStrategy from './config/facebookStrategy';
 import indexRouter from './routes/index';
 
 dotenv.config();
@@ -21,6 +23,11 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+passport.use(facebookStrategy);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 /* Index router */
 app.use('/', indexRouter);

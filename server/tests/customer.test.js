@@ -6,7 +6,7 @@ import app from '../index';
 
 chai.use(chaiHttp);
 
-const validToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJuYW1lIjoia2FtcCIsImVtYWlsIjoia2FtcEBleGFtcGxlLmNvbSJ9LCJpYXQiOjE1NTU5MjYyMDgsImV4cCI6MTU1NjAxMjYwOH0.zbLB-8oR6LLqCcZ58AAh9sfDfS1m-3gh32-kRBP542w';
+let validToken = '';
 const customer = {
   email: faker.internet.email().toLowerCase(),
   name: 'testuser',
@@ -100,6 +100,7 @@ describe('Customers', () => {
         expect(res.body.user).to.be.an('object');
         expect(res.body.user.name).to.be.a('string');
         expect(res.body.accessToken).to.be.a('string');
+        validToken = res.body.accessToken;
         done();
       });
   });
@@ -140,8 +141,17 @@ describe('Customers', () => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
         expect(res.body.name).to.be.a('string');
-        expect(res.body.email).to.be.equal('kamp@example.com');
+        expect(res.body.email).to.be.equal('mack41@hotmail.com');
         done();
       });
   });
+
+  it('Should login with facebook', (done) => {
+    chai.request(app)
+      .get('/login/facebook')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        done();
+      });
+  }).timeout(10000);
 });
