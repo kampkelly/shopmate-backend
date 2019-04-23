@@ -34,8 +34,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE
     }
   }, { freezeTableName: true, tableName: 'shopping_cart', timestamps: false });
-  // ShoppingCart.associate = (models) => {
-  //   // associations can be defined here
-  // };
+  ShoppingCart.associate = (models) => {
+    // associations can be defined here
+    ShoppingCart.belongsTo(models.Product, {
+      foreignKey: 'product_id',
+      targetKey: 'product_id',
+      onDelete: 'CASCADE'
+    });
+  };
   return ShoppingCart;
 };
