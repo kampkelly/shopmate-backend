@@ -132,4 +132,29 @@ export default class ShoppingCartController {
       res.status(500).json(error);
     }
   }
+
+  /**
+    * @description -This method clears the cart
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {array} - empty cart
+    */
+  static async clearCart(req, res) {
+    try {
+      const { cart_id: cartId } = req.body;
+      if (!cartId) {
+        res.status(400).json({
+          code: 'USR_02',
+          message: 'The cart id is required',
+          field: 'cart_id'
+        });
+      }
+      await ShoppingCart.destroy({
+        where: { cart_id: cartId }
+      });
+      res.status(200).json([]);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
 }
