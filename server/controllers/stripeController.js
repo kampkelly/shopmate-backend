@@ -1,8 +1,13 @@
 import 'dotenv/config';
 import stripe from 'stripe';
+import emailTemplates from '../helpers/emailTemplates';
+import sendMail from '../helpers/sendMail';
 
 const keySecret = process.env.STRIPE_SECRET_KEY;
 const Stripe = stripe(keySecret);
+const {
+  confirmationTemplateHtml, confirmationTemplateText
+} = emailTemplates;
 
 /**
  *
@@ -34,6 +39,13 @@ export default class StripeController {
         currency,
         customer: customer.id,
         metadata: { order_id: orderId },
+      });
+      sendMail({
+        from: process.env.MAIL_SENDER,
+        to: email,
+        subject: 'Confirmation On Your Order',
+        text: confirmationTemplateText(req.user.name, process.env.BASE_URL),
+        html: confirmationTemplateHtml
       });
       res.status(200).json({ charge, message: 'Payment processed' });
     } catch (error) {
