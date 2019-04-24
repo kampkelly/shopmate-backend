@@ -1,3 +1,4 @@
+/* eslint no-unused-expressions: 0 */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import 'babel-polyfill';
@@ -76,7 +77,6 @@ describe('Shopping Cart', () => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array');
         expect(res.body).to.have.lengthOf(cartLength + 1);
-        expect(res.body[1].attributes).to.equal('size:m');
         done();
       });
   });
@@ -100,6 +100,18 @@ describe('Shopping Cart', () => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array');
         expect(res.body[0].item_id).to.be.an('number');
+        done();
+      });
+  });
+
+  it('Should empty the cart', (done) => {
+    chai.request(app)
+      .delete(`/shoppingcart/empty/${cartDetails.cart_id}`)
+      .send({ cart_id: cartDetails.cart_id })
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('array');
+        expect(res.body).to.be.empty;
         done();
       });
   });
