@@ -6,7 +6,6 @@ const {
   ShoppingCart, Product
 } = Model;
 
-
 /**
  *
  *
