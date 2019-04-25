@@ -3,7 +3,7 @@ import Model from '../models';
 import productHelper from '../helpers/product';
 
 const {
-  Category, Product
+  Category, Department, Product
 } = Model;
 const {
   nestedPagination, filterByDescriptionLength
@@ -95,9 +95,7 @@ export default class ProductController {
       const { page, limit, description_length: descriptionLength } = req.query;
       const query = {
         where: { category_id: categoryId },
-        attributes: [
-          'category_id'
-        ],
+        attributes: [],
         include: [{
           model: Product,
           attributes: [
@@ -125,6 +123,59 @@ export default class ProductController {
       }
     } catch (error) {
       console.log(error);
+      res.status(500).json(error);
+    }
+  }
+
+  /**
+    * @description -This method gets products in a department
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - products in department
+    */
+  static async getProductsInDepartment(req, res) {
+    try {
+      const { departmentId } = req.params;
+      const { page, limit, description_length: descriptionLength } = req.query;
+      const query = {
+        where: { department_id: departmentId },
+        attributes: [
+          'department_id'
+        ],
+        include: [{
+          model: Category,
+          attributes: [
+            'category_id'
+          ],
+          include: [{
+            model: Product,
+            attributes: [
+              'product_id',
+              'name',
+              'description',
+              'price',
+              'discounted_price',
+              'thumbnail'
+            ],
+            through: { attributes: [] },
+          }]
+        }]
+      };
+      const department = await Department.findOne(query);
+      if (!department) {
+        res.status(404).json({ department, message: 'Category cannot be found' });
+      } else {
+        const allProducts = department.Categories
+          .reduce((combinedProducts, category) => combinedProducts.concat(category.Products), []);
+        let rows = [];
+        rows = nestedPagination(allProducts, page, limit);
+        if (descriptionLength) {
+          rows = filterByDescriptionLength(rows, descriptionLength);
+        }
+        const count = allProducts.length;
+        res.status(200).json({ count, rows });
+      }
+    } catch (error) {
       res.status(500).json(error);
     }
   }
