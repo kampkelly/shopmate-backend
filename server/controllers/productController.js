@@ -30,21 +30,17 @@ export default class ProductController {
         limit: 19,
         offset: 0
       };
-      if (req.query.limit) {
-        query.limit = parseInt(req.query.limit);
-      }
-      if (req.query.page) {
-        query.offset = parseInt(req.query.limit) * (parseInt(req.query.page) - 1);
-      }
-      if (req.query.description_length) {
-        const descriptionLength = req.query.description_length;
-        query.where = Sequelize.where(Sequelize.fn('char_length', Sequelize.col('description')), '<=', descriptionLength);
-      }
+      const { page, limit, description_length: descriptionLength } = req.query;
       query.attributes = ['product_id', 'name', 'description', 'price', 'discounted_price', 'thumbnail'];
       const products = await Product.findAll(query);
+      let rows = [];
+      rows = nestedPagination(products, page, limit);
+      if (descriptionLength) {
+        rows = filterByDescriptionLength(rows, descriptionLength);
+      }
       const allProducts = await Product.findAll();
       const count = allProducts.length;
-      res.status(200).json({ count, rows: products });
+      res.status(200).json({ count, rows });
     } catch (error) {
       res.status(500).json(error);
     }
