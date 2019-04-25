@@ -91,4 +91,55 @@ describe('Products', () => {
         done();
       });
   });
+
+  it('Should get products in a department', (done) => {
+    chai.request(app)
+      .get('/products/inDepartment/1')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.count).to.be.a('number');
+        expect(res.body.rows).to.an('array');
+        done();
+      });
+  });
+
+  it('Should get products in a department by limit', (done) => {
+    chai.request(app)
+      .get('/products/inDepartment/1?limit=4')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.count).to.be.a('number');
+        expect(res.body.rows).to.an('array');
+        expect(res.body.rows).to.have.lengthOf(4);
+        done();
+      });
+  });
+
+  it('Should get products in a department by description length', (done) => {
+    chai.request(app)
+      .get('/products/inDepartment/1?limit=4&description_length=50')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.count).to.be.a('number');
+        expect(res.body.rows).to.an('array');
+        expect(res.body.rows).to.have.lengthOf(4);
+        console.log('>>>>rows', res.body.rows[0]);
+        expect(res.body.rows[0].description).to.have.lengthOf.below(50 + 4);
+        done();
+      });
+  });
+
+  it('Should show 404 if no department', (done) => {
+    chai.request(app)
+      .get('/products/inDepartment/1000')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body).to.be.an('object');
+        expect(res.body.message).to.include('Category cannot be found');
+        done();
+      });
+  });
 });
