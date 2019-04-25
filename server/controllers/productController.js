@@ -1,9 +1,13 @@
 import Sequelize from 'sequelize';
 import Model from '../models';
+import productHelper from '../helpers/product';
 
 const {
   Category, Product
 } = Model;
+const {
+  nestedPagination, filterByDescriptionLength
+} = productHelper;
 
 /**
  *
@@ -88,6 +92,7 @@ export default class ProductController {
   static async getProductsInCategory(req, res) {
     try {
       const { categoryId } = req.params;
+      const { page, limit, description_length: descriptionLength } = req.query;
       const query = {
         where: { category_id: categoryId },
         attributes: [
@@ -110,10 +115,16 @@ export default class ProductController {
       if (!category) {
         res.status(404).json({ category, message: 'Category cannot be found' });
       } else {
+        let rows = [];
+        rows = nestedPagination(category.Products, page, limit);
+        if (descriptionLength) {
+          rows = filterByDescriptionLength(rows, descriptionLength);
+        }
         const count = category.Products.length;
-        res.status(200).json({ count, rows: category.Products });
+        res.status(200).json({ count, rows });
       }
     } catch (error) {
+      console.log(error);
       res.status(500).json(error);
     }
   }
