@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'category_id',
       through: 'product_category',
     });
+    Category.belongsTo(models.Department, {
+      foreignKey: 'department_id',
+      targetKey: 'department_id',
+      onDelete: 'CASCADE'
+    });
   };
   return Category;
 };
