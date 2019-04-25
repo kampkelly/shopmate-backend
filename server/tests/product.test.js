@@ -126,7 +126,6 @@ describe('Products', () => {
         expect(res.body.count).to.be.a('number');
         expect(res.body.rows).to.an('array');
         expect(res.body.rows).to.have.lengthOf(4);
-        console.log('>>>>rows', res.body.rows[0]);
         expect(res.body.rows[0].description).to.have.lengthOf.below(50 + 4);
         done();
       });
@@ -139,6 +138,19 @@ describe('Products', () => {
         expect(res.status).to.equal(404);
         expect(res.body).to.be.an('object');
         expect(res.body.message).to.include('Category cannot be found');
+        done();
+      });
+  });
+
+  it('Search for products', (done) => {
+    chai.request(app)
+      .get('/products/search?query_string=Coat&page=1&limit=4&description_length=50')
+      .end((err, res) => {
+        expect(res.body).to.be.an('object');
+        expect(res.body.count).to.be.a('number');
+        expect(res.body.rows).to.an('array');
+        expect(res.body.rows).to.have.lengthOf.below(5);
+        expect(res.body.rows[0].description).to.have.lengthOf.below(50 + 4);
         done();
       });
   });
