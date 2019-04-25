@@ -154,4 +154,15 @@ describe('Products', () => {
         done();
       });
   });
+
+  it('Show 400 on invalid query params when getting products', (done) => {
+    chai.request(app)
+      .get('/products?limit=1ab')
+      .end((err, res) => {
+        expect(res.body).to.be.an('object');
+        expect(res.body.error.status).to.equal(400);
+        expect(res.body.error.message).to.an('array');
+        done();
+      });
+  });
 });
