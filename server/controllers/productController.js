@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+import Sequelize, { Op } from 'sequelize';
 import Model from '../models';
 import productHelper from '../helpers/product';
 
@@ -122,7 +122,6 @@ export default class ProductController {
         res.status(200).json({ count, rows });
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json(error);
     }
   }
@@ -175,6 +174,39 @@ export default class ProductController {
         const count = allProducts.length;
         res.status(200).json({ count, rows });
       }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+
+  /**
+    * @description -This method search products
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - search products
+    */
+  static async searchProducts(req, res) {
+    try {
+      const { query_string: queryString } = req.query;
+      const { page, limit, description_length: descriptionLength } = req.query;
+      const query = {
+        where: {
+          [Op.or]: [{
+            name: { [Op.like]: `%${queryString}%` },
+          }, {
+            description: { [Op.like]: `%${queryString}%` }
+          }]
+        }
+      };
+      query.attributes = ['product_id', 'name', 'description', 'price', 'discounted_price', 'thumbnail'];
+      const products = await Product.findAll(query);
+      let rows = [];
+      rows = nestedPagination(products, page, limit);
+      if (descriptionLength) {
+        rows = filterByDescriptionLength(rows, descriptionLength);
+      }
+      const count = products.length;
+      res.status(200).json({ count, rows });
     } catch (error) {
       res.status(500).json(error);
     }
