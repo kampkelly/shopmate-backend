@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import 'dotenv/config';
-import Model from '../models';
+import Model from '../database/models';
 import Authenticator from '../middlewares/authenticator';
 import errorResponse from '../helpers/errorResponse';
 

@@ -1,7 +1,7 @@
 import asyncRedis from 'async-redis';
 import 'dotenv/config';
 import generateUniqueId from '../helpers/generateUniqueId';
-import Model from '../models';
+import Model from '../database/models';
 import formatCartItems from '../helpers/formatCartItems';
 import errorResponse from '../helpers/errorResponse';
 

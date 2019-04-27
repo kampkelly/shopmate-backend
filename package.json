@@ -11,12 +11,15 @@
     "babel-watch": "babel-watch server/index.js",
     "dev": "cross-env process.env.NODE_ENV=development npm run eslint && npm run babel-node server/index.js",
     "eslint": "eslint . --fix --ignore-path .gitignore",
-    "migrate-undo": "sequelize db:migrate:undo:all",
+    "migrate-undo": "sequelize db:migrate:undo",
+    "migrate-undo:all": "sequelize db:migrate:undo:all",
     "migrate": "sequelize db:migrate",
-    "migrate-reset": "sequelize db:migrate:undo:all && sequelize db:migrate",
+    "migrate-reset": "cross-env process.env.NODE_ENV=test sequelize db:migrate:undo:all && sequelize db:migrate",
     "postinstall": "babel server -d build",
+    "pretest": "sequelize db:migrate:undo:all --env test && sequelize db:migrate --env test && sequelize db:seed:all --env test",
+    "seed": "cross-env process.env.NODE_ENV=test sequelize db:seed:all",
     "start": "npm run migrate && node build/index.js",
-    "test": "cross-env process.env.NODE_ENV=test nyc mocha --compilers js:babel-core/register ./server/tests/**/'*.test.js' --recursive --exit || true",
+    "test": "cross-env process.env.NODE_ENV=test  nyc mocha --compilers js:babel-core/register ./server/tests/**/'*.test.js' --recursive --exit || true",
     "watch": "npm-watch"
   },
   "repository": {
