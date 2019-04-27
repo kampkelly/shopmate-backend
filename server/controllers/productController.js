@@ -1,10 +1,13 @@
 /* eslint no-restricted-globals: ["error", "event", "fdescribe"] */
 
 import Sequelize, { Op } from 'sequelize';
+import asyncRedis from 'async-redis';
+import 'dotenv/config';
 import Model from '../models';
 import productHelper from '../helpers/product';
 import errorResponse from '../helpers/errorResponse';
 
+const redisClient = asyncRedis.createClient(process.env.REDIS_URL);
 const {
   Category, Department, Product
 } = Model;
@@ -37,17 +40,18 @@ export default class ProductController {
         query.limit = parseInt(req.query.limit) - 1;
       }
       if (req.query.page) {
-        query.offset = parseInt(req.query.limit) * (parseInt(req.query.page) - 1);
+        query.offset = parseInt(query.limit) * (parseInt(req.query.page) - 1);
       }
       const { description_length: descriptionLength } = req.query;
       query.attributes = ['product_id', 'name', 'description', 'price', 'discounted_price', 'thumbnail'];
       const products = await Product.findAll(query);
-      let rows = [];
+      let rows = products;
       if (descriptionLength) {
         rows = filterByDescriptionLength(products, descriptionLength);
       }
       const allProducts = await Product.findAll();
       const count = allProducts.length;
+      redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
@@ -122,6 +126,7 @@ export default class ProductController {
         rows = filterByDescriptionLength(rows, descriptionLength);
       }
       const count = category.Products.length;
+      redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'CAT_05', error.parent.sqlMessage, ''));
@@ -175,6 +180,7 @@ export default class ProductController {
         rows = filterByDescriptionLength(rows, descriptionLength);
       }
       const count = allProducts.length;
+      redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'DEP_05', error.parent.sqlMessage, ''));
@@ -189,8 +195,9 @@ export default class ProductController {
     */
   static async searchProducts(req, res) {
     try {
-      const { query_string: queryString } = req.query;
-      const { page, limit, description_length: descriptionLength } = req.query;
+      const {
+        page, limit, description_length: descriptionLength, query_string: queryString
+      } = req.query;
       const query = {
         where: {
           [Op.or]: [{
@@ -208,6 +215,7 @@ export default class ProductController {
         rows = filterByDescriptionLength(rows, descriptionLength);
       }
       const count = products.length;
+      redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
