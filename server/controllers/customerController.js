@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import 'dotenv/config';
 import Model from '../models';
 import Authenticator from '../middlewares/authenticator';
+import errorResponse from '../helpers/errorResponse';
 
 const {
   Customer
@@ -27,6 +28,10 @@ export default class CustomerController {
     try {
       const { email, name, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const existingCustomer = await Customer.findOne({ where: { email } });
+      if (existingCustomer) {
+        return res.status(409).json(errorResponse(req, res, 409, 'USR_04', 'The email already exists', 'email'));
+      }
       const customer = await Customer.create({ email, name, password: hashedPassword }, { attributes: ['name'] });
       let returnedCustomer = customer;
       returnedCustomer = Object.assign({
@@ -49,7 +54,7 @@ export default class CustomerController {
 
       res.status(201).json({ customer: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     } catch (error) {
-      res.status(500).json({ message: error });
+      return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -64,8 +69,7 @@ export default class CustomerController {
       const { email, password } = req.body;
       const customer = await Customer.findOne({ where: { email } });
       if (!customer) {
-        return res.status(401)
-          .send({ success: false, message: 'Invalid email or password' });
+        return res.status(401).json(errorResponse(req, res, 401, 'USR_01', 'Email or Password is invalid.', ''));
       }
       let returnedCustomer = customer;
       returnedCustomer = Object.assign({
@@ -91,11 +95,11 @@ export default class CustomerController {
           email: returnedCustomer.email
         });
       } else {
-        res.status(401).json({ success: false, message: 'Invalid email or password' });
+        return res.status(401).json(errorResponse(req, res, 401, 'USR_01', 'Email or Password is invalid.', ''));
       }
-      res.status(200).json({ user: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+      return res.status(200).json({ user: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'An error occured' });
+      return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -109,10 +113,30 @@ export default class CustomerController {
     try {
       const { email } = req.user;
       const customer = await Customer.findOne({ where: { email } });
+      if (!customer) {
+        return res.status(404).json(errorResponse(req, res, 404, 'USR_04', 'Customer does not exist', ''));
+      }
       const updatedCustomer = await customer.update(req.body);
-      return res.status(200).json(updatedCustomer);
+      let returnedCustomer = updatedCustomer;
+      returnedCustomer = Object.assign({
+        customer_id: updatedCustomer.dataValues.customer_id,
+        name: updatedCustomer.dataValues.name,
+        email: updatedCustomer.dataValues.email,
+        address_1: updatedCustomer.dataValues.address_1,
+        address_2: updatedCustomer.dataValues.address_2,
+        city: updatedCustomer.dataValues.city,
+        region: updatedCustomer.dataValues.region,
+        postal_code: updatedCustomer.dataValues.postal_code,
+        country: updatedCustomer.dataValues.country,
+        shipping_region_id: updatedCustomer.dataValues.shipping_region_id,
+        credit_Card: updatedCustomer.dataValues.credit_card,
+        day_phone: updatedCustomer.dataValues.day_phone,
+        eve_phone: updatedCustomer.dataValues.eve_phone,
+        mob_phone: updatedCustomer.dataValues.mob_phone
+      }, {});
+      return res.status(200).json(returnedCustomer);
     } catch (error) {
-      res.status(500).json({ success: false, message: 'An error occured' });
+      return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error, ''));
     }
   }
 }

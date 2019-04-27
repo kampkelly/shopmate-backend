@@ -1,6 +1,7 @@
 import generateUniqueId from '../helpers/generateUniqueId';
 import Model from '../models';
 import formatCartItems from '../helpers/formatCartItems';
+import errorResponse from '../helpers/errorResponse';
 
 const {
   ShoppingCart, Product
@@ -24,12 +25,11 @@ export default class ShoppingCartController {
     try {
       const uniqueId = generateUniqueId(18);
       if (uniqueId) {
-        res.status(200).json({ cart_id: uniqueId });
-      } else {
-        res.status(400).json({ message: 'Bad Request' });
+        return res.status(200).json({ cart_id: uniqueId });
       }
+      return res.status(400).json(errorResponse(req, res, 400, 'SHP_04', 'Bad Request', ''));
     } catch (error) {
-      res.status(400).json({ message: 'Bad Request' });
+      return res.status(400).json(errorResponse(req, res, 400, 'SHP_04', 'Bad Request', ''));
     }
   }
 
@@ -65,7 +65,7 @@ export default class ShoppingCartController {
         res.status(200).json(formattedCartItems);
       }
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'SHP_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -126,10 +126,10 @@ export default class ShoppingCartController {
         const formattedCartItems = formatCartItems(cartItems);
         res.status(200).json(formattedCartItems);
       } else {
-        res.status(404).json({ cart: [], message: 'Product cannot be found' });
+        return res.status(404).json(errorResponse(req, res, 404, 'SHP_04', 'Product cannot be found', ''));
       }
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'SHP_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -154,7 +154,7 @@ export default class ShoppingCartController {
       });
       res.status(200).json([]);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'SHP_05', error.parent.sqlMessage, ''));
     }
   }
 }

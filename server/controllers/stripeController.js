@@ -2,6 +2,7 @@ import 'dotenv/config';
 import stripe from 'stripe';
 import emailTemplates from '../helpers/emailTemplates';
 import sendMail from '../helpers/sendMail';
+import errorResponse from '../helpers/errorResponse';
 
 const keySecret = process.env.STRIPE_SECRET_KEY;
 const Stripe = stripe(keySecret);
@@ -49,7 +50,7 @@ export default class StripeController {
       });
       res.status(200).json({ charge, message: 'Payment processed' });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'STR_05', error.message, ''));
     }
   }
 }
