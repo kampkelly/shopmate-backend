@@ -1,7 +1,11 @@
+import asyncRedis from 'async-redis';
+import 'dotenv/config';
 import generateUniqueId from '../helpers/generateUniqueId';
 import Model from '../models';
 import formatCartItems from '../helpers/formatCartItems';
 import errorResponse from '../helpers/errorResponse';
+
+const redisClient = asyncRedis.createClient(process.env.REDIS_URL);
 
 const {
   ShoppingCart, Product
@@ -62,6 +66,8 @@ export default class ShoppingCartController {
       if (!formattedCartItems.length) {
         res.status(200).json({ cart: formattedCartItems, message: 'Cart id does not exist' });
       } else {
+        redisClient
+          .setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify(formattedCartItems));
         res.status(200).json(formattedCartItems);
       }
     } catch (error) {
@@ -124,6 +130,8 @@ export default class ShoppingCartController {
           }]
         });
         const formattedCartItems = formatCartItems(cartItems);
+        redisClient
+          .setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify(formattedCartItems));
         res.status(200).json(formattedCartItems);
       } else {
         return res.status(404).json(errorResponse(req, res, 404, 'SHP_04', 'Product cannot be found', ''));
@@ -141,7 +149,10 @@ export default class ShoppingCartController {
     */
   static async clearCart(req, res) {
     try {
-      const { cart_id: cartId } = req.body;
+      let { cart_id: cartId } = req.body;
+      if (!cartId) {
+        cartId = req.params.cart_id;
+      }
       if (!cartId) {
         res.status(400).json({
           code: 'USR_02',
@@ -152,6 +163,7 @@ export default class ShoppingCartController {
       await ShoppingCart.destroy({
         where: { cart_id: cartId }
       });
+      redisClient.del(req.cacheKey);
       res.status(200).json([]);
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'SHP_05', error.parent.sqlMessage, ''));
