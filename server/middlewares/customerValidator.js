@@ -1,3 +1,5 @@
+import errorResponse from '../helpers/errorResponse';
+
 export default {
   registerValidator(req, res, next) {
     const { email, name, password } = req.body;
@@ -14,7 +16,7 @@ export default {
     if (!errors.length) {
       return next();
     }
-    if (errors.length) res.status(400).json({ message: errors });
+    if (errors.length) return res.status(400).json(errorResponse(req, res, 400, 'USR_04', errors, ''));
   },
 
   loginValidator(req, res, next) {
@@ -30,6 +32,6 @@ export default {
     if (!errors.length) {
       return next();
     }
-    if (errors.length) res.status(400).json({ message: errors });
+    if (errors.length) return res.status(400).json(errorResponse(req, res, 400, 'USR_04', errors, ''));
   }
 };

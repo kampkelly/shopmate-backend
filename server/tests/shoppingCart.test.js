@@ -87,8 +87,7 @@ describe('Shopping Cart', () => {
       .send(cartDetailsWithInvalidProductId)
       .end((err, res) => {
         expect(res.status).to.equal(404);
-        expect(res.body.cart).to.be.an('array');
-        expect(res.body.message).to.equal('Product cannot be found');
+        expect(res.body.error.message).to.equal('Product cannot be found');
         done();
       });
   });

@@ -35,8 +35,8 @@ describe('Products', () => {
       .end((err, res) => {
         expect(res.status).to.equal(404);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.be.a('string');
-        expect(res.body.message).to.include('Product cannot be found');
+        expect(res.body.error.message).to.be.a('string');
+        expect(res.body.error.message).to.include('Product cannot be found');
         done();
       });
   });
@@ -75,7 +75,6 @@ describe('Products', () => {
         expect(res.body.count).to.be.a('number');
         expect(res.body.rows).to.an('array');
         expect(res.body.rows).to.have.lengthOf(4);
-        console.log('>>>>rows', res.body.rows[0]);
         expect(res.body.rows[0].description).to.have.lengthOf.below(50 + 4);
         done();
       });
@@ -87,7 +86,7 @@ describe('Products', () => {
       .end((err, res) => {
         expect(res.status).to.equal(404);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.include('Category cannot be found');
+        expect(res.body.error.message).to.include('Category with this Id does not exist');
         done();
       });
   });
@@ -137,7 +136,7 @@ describe('Products', () => {
       .end((err, res) => {
         expect(res.status).to.equal(404);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.include('Category cannot be found');
+        expect(res.body.error.message).to.include('Department with this id does not exist');
         done();
       });
   });

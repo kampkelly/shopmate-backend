@@ -68,10 +68,9 @@ describe('Customers', () => {
       .post('/customers')
       .send(existingCustomer)
       .end((err, res) => {
-        expect(res.status).to.equal(500);
+        expect(res.status).to.equal(409);
         expect(res.body).to.be.an('object');
-        expect(res.body.message.errors).to.be.an('array');
-        expect(res.body.message.errors[0].message).to.include('email must be unique');
+        expect(res.body.error.message).to.include('The email already exists');
         done();
       });
   });
@@ -83,9 +82,9 @@ describe('Customers', () => {
       .end((err, res) => {
         expect(res.status).to.equal(400);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.be.an('array');
-        expect(res.body.message[0]).to.include('Name is required');
-        expect(res.body.message[2]).to.include('Password must be at least 6 characters');
+        expect(res.body.error.message).to.be.an('array');
+        expect(res.body.error.message[0]).to.include('Name is required');
+        expect(res.body.error.message[2]).to.include('Password must be at least 6 characters');
         done();
       });
   });
@@ -112,8 +111,7 @@ describe('Customers', () => {
       .end((err, res) => {
         expect(res.status).to.equal(401);
         expect(res.body).to.be.an('object');
-        expect(res.body.success).to.equal(false);
-        expect(res.body.message).to.equal('Invalid email or password');
+        expect(res.body.error.message).to.equal('Email or Password is invalid.');
         done();
       });
   });
@@ -125,9 +123,9 @@ describe('Customers', () => {
       .end((err, res) => {
         expect(res.status).to.equal(400);
         expect(res.body).to.be.an('object');
-        expect(res.body.message).to.be.an('array');
-        expect(res.body.message[0]).to.include('Password is required');
-        expect(res.body.message[1]).to.include('Password must be a string');
+        expect(res.body.error.message).to.be.an('array');
+        expect(res.body.error.message[0]).to.include('Password is required');
+        expect(res.body.error.message[1]).to.include('Password must be a string');
         done();
       });
   });

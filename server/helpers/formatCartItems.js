@@ -13,7 +13,6 @@ const formatCartItems = (cartItems) => {
     formattedCartItems[i].subtotal = subTotal.toFixed(2).toString();
     i += 1;
   });
-  console.log('good');
   return formattedCartItems;
 };
 

@@ -1,5 +1,6 @@
 /* eslint use-isnan: "error" */
 /* eslint no-restricted-globals: ["error", "event", "fdescribe"] */
+import errorResponse from '../helpers/errorResponse';
 
 export default {
   validateQueryParams(req, res, next) {
@@ -17,17 +18,8 @@ export default {
       if (isNaN(page)) errors.push('Page must be a number');
     }
     if (errors.length) {
-      errors.push('');
-      res.status(400).json({
-        error: {
-          status: 400,
-          code: 'USR_04',
-          message: errors,
-          field: ''
-        }
-      });
-    } else {
-      next();
+      return res.status(400).json(errorResponse(req, res, 400, 'USR_04', errors, ''));
     }
+    next();
   }
 };

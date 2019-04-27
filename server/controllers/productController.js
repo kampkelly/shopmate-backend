@@ -1,6 +1,9 @@
+/* eslint no-restricted-globals: ["error", "event", "fdescribe"] */
+
 import Sequelize, { Op } from 'sequelize';
 import Model from '../models';
 import productHelper from '../helpers/product';
+import errorResponse from '../helpers/errorResponse';
 
 const {
   Category, Department, Product
@@ -30,19 +33,24 @@ export default class ProductController {
         limit: 19,
         offset: 0
       };
-      const { page, limit, description_length: descriptionLength } = req.query;
+      if (req.query.limit) {
+        query.limit = parseInt(req.query.limit) - 1;
+      }
+      if (req.query.page) {
+        query.offset = parseInt(req.query.limit) * (parseInt(req.query.page) - 1);
+      }
+      const { description_length: descriptionLength } = req.query;
       query.attributes = ['product_id', 'name', 'description', 'price', 'discounted_price', 'thumbnail'];
       const products = await Product.findAll(query);
       let rows = [];
-      rows = nestedPagination(products, page, limit);
       if (descriptionLength) {
-        rows = filterByDescriptionLength(rows, descriptionLength);
+        rows = filterByDescriptionLength(products, descriptionLength);
       }
       const allProducts = await Product.findAll();
       const count = allProducts.length;
-      res.status(200).json({ count, rows });
+      return res.status(200).json({ count, rows });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -70,12 +78,11 @@ export default class ProductController {
         ]
       });
       if (!product) {
-        res.status(404).json({ product, message: 'Product cannot be found' });
-      } else {
-        res.status(200).json(product);
+        return res.status(404).json(errorResponse(req, res, 404, 'PRD_04', 'Product cannot be found', ''));
       }
+      return res.status(200).json(product);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -107,18 +114,17 @@ export default class ProductController {
       };
       const category = await Category.findOne(query);
       if (!category) {
-        res.status(404).json({ category, message: 'Category cannot be found' });
-      } else {
-        let rows = [];
-        rows = nestedPagination(category.Products, page, limit);
-        if (descriptionLength) {
-          rows = filterByDescriptionLength(rows, descriptionLength);
-        }
-        const count = category.Products.length;
-        res.status(200).json({ count, rows });
+        return res.status(404).json(errorResponse(req, res, 404, 'CAT_01', 'Category with this Id does not exist', 'id'));
       }
+      let rows = [];
+      rows = nestedPagination(category.Products, page, limit);
+      if (descriptionLength) {
+        rows = filterByDescriptionLength(rows, descriptionLength);
+      }
+      const count = category.Products.length;
+      return res.status(200).json({ count, rows });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'CAT_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -131,6 +137,7 @@ export default class ProductController {
   static async getProductsInDepartment(req, res) {
     try {
       const { departmentId } = req.params;
+      if (isNaN(departmentId)) res.status(400).json(errorResponse(req, res, 400, 'DEP_01', 'The ID is not a number.', 'id'));
       const { page, limit, description_length: descriptionLength } = req.query;
       const query = {
         where: { department_id: departmentId },
@@ -158,20 +165,19 @@ export default class ProductController {
       };
       const department = await Department.findOne(query);
       if (!department) {
-        res.status(404).json({ department, message: 'Category cannot be found' });
-      } else {
-        const allProducts = department.Categories
-          .reduce((combinedProducts, category) => combinedProducts.concat(category.Products), []);
-        let rows = [];
-        rows = nestedPagination(allProducts, page, limit);
-        if (descriptionLength) {
-          rows = filterByDescriptionLength(rows, descriptionLength);
-        }
-        const count = allProducts.length;
-        res.status(200).json({ count, rows });
+        return res.status(404).json(errorResponse(req, res, 404, 'DEP_02', 'Department with this id does not exist', 'id'));
       }
+      const allProducts = department.Categories
+        .reduce((combinedProducts, category) => combinedProducts.concat(category.Products), []);
+      let rows = [];
+      rows = nestedPagination(allProducts, page, limit);
+      if (descriptionLength) {
+        rows = filterByDescriptionLength(rows, descriptionLength);
+      }
+      const count = allProducts.length;
+      return res.status(200).json({ count, rows });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'DEP_05', error.parent.sqlMessage, ''));
     }
   }
 
@@ -202,9 +208,9 @@ export default class ProductController {
         rows = filterByDescriptionLength(rows, descriptionLength);
       }
       const count = products.length;
-      res.status(200).json({ count, rows });
+      return res.status(200).json({ count, rows });
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
     }
   }
 }
