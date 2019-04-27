@@ -1,6 +1,6 @@
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('shipping_regions', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('shipping_region', {
     shipping_region_id: {
       allowNull: false,
       autoIncrement: true,
@@ -12,5 +12,5 @@ module.exports = {
       allowNull: false
     }
   }),
-  down: queryInterface => queryInterface.dropTable('shipping_regions')
+  down: queryInterface => queryInterface.dropTable('shipping_region')
 };
