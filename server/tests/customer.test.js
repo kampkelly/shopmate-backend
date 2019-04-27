@@ -7,13 +7,8 @@ import app from '../index';
 chai.use(chaiHttp);
 
 let validToken = '';
-const customer = {
-  email: faker.internet.email().toLowerCase(),
-  name: 'testuser',
-  password: 'Password1!'
-};
 
-const existingCustomer = {
+const customer = {
   email: 'mack41@hotmail.com',
   name: 'testuser',
   password: 'Password1!'
@@ -66,7 +61,7 @@ describe('Customers', () => {
   it('Should not register customer if email exists', (done) => {
     chai.request(app)
       .post('/customers')
-      .send(existingCustomer)
+      .send(customer)
       .end((err, res) => {
         expect(res.status).to.equal(409);
         expect(res.body).to.be.an('object');
@@ -92,7 +87,7 @@ describe('Customers', () => {
   it('Should login a customer', (done) => {
     chai.request(app)
       .post('/customers/login')
-      .send(existingCustomer)
+      .send(customer)
       .end((err, res) => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');

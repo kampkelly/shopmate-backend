@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import Model from '../models';
+import Model from '../database/models';
 import Authenticator from '../middlewares/authenticator';
 
 const { Customer } = Model;

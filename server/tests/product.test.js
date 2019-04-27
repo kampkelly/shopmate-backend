@@ -6,19 +6,19 @@ import app from '../index';
 chai.use(chaiHttp);
 
 describe('Products', () => {
-  it('Should get all articles', (done) => {
+  it('Should get all products', (done) => {
     chai.request(app)
       .get('/products')
       .end((err, res) => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
-        expect(res.body.count).to.be.equal(101);
+        expect(res.body.count).to.be.equal(4);
         expect(res.body.rows).to.be.an('array');
         done();
       });
   });
 
-  it('Should get a single article', (done) => {
+  it('Should get a single product', (done) => {
     chai.request(app)
       .get('/products/1')
       .end((err, res) => {
@@ -61,7 +61,7 @@ describe('Products', () => {
         expect(res.body).to.be.an('object');
         expect(res.body.count).to.be.a('number');
         expect(res.body.rows).to.an('array');
-        expect(res.body.rows).to.have.lengthOf(4);
+        expect(res.body.rows).to.have.lengthOf(2);
         done();
       });
   });
@@ -74,7 +74,7 @@ describe('Products', () => {
         expect(res.body).to.be.an('object');
         expect(res.body.count).to.be.a('number');
         expect(res.body.rows).to.an('array');
-        expect(res.body.rows).to.have.lengthOf(4);
+        expect(res.body.rows).to.have.lengthOf(2);
         expect(res.body.rows[0].description).to.have.lengthOf.below(50 + 4);
         done();
       });
@@ -111,7 +111,7 @@ describe('Products', () => {
         expect(res.body).to.be.an('object');
         expect(res.body.count).to.be.a('number');
         expect(res.body.rows).to.an('array');
-        expect(res.body.rows).to.have.lengthOf(4);
+        expect(res.body.rows).to.have.lengthOf(2);
         done();
       });
   });
@@ -124,7 +124,7 @@ describe('Products', () => {
         expect(res.body).to.be.an('object');
         expect(res.body.count).to.be.a('number');
         expect(res.body.rows).to.an('array');
-        expect(res.body.rows).to.have.lengthOf(4);
+        expect(res.body.rows).to.have.lengthOf(2);
         expect(res.body.rows[0].description).to.have.lengthOf.below(50 + 4);
         done();
       });
@@ -143,7 +143,7 @@ describe('Products', () => {
 
   it('Search for products', (done) => {
     chai.request(app)
-      .get('/products/search?query_string=Coat&page=1&limit=4&description_length=50')
+      .get('/products/search?query_string=good&page=1&limit=4&description_length=50')
       .end((err, res) => {
         expect(res.body).to.be.an('object');
         expect(res.body.count).to.be.a('number');

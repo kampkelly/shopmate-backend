@@ -3,7 +3,7 @@
 import Sequelize, { Op } from 'sequelize';
 import asyncRedis from 'async-redis';
 import 'dotenv/config';
-import Model from '../models';
+import Model from '../database/models';
 import productHelper from '../helpers/product';
 import errorResponse from '../helpers/errorResponse';
 
