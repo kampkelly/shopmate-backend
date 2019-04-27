@@ -6,6 +6,7 @@ import logger from 'morgan';
 import errorhandler from 'errorhandler';
 import dotenv from 'dotenv';
 import passport from 'passport';
+import 'babel-polyfill';
 import facebookStrategy from './config/facebookStrategy';
 import indexRouter from './routes/index';
 
