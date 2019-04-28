@@ -90,8 +90,8 @@ describe('Customers', () => {
       .end((err, res) => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
-        expect(res.body.user).to.be.an('object');
-        expect(res.body.user.name).to.be.a('string');
+        expect(res.body.customer).to.be.an('object');
+        expect(res.body.customer.name).to.be.a('string');
         expect(res.body.accessToken).to.be.a('string');
         validToken = res.body.accessToken;
         done();

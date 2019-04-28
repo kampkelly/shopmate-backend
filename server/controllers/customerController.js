@@ -52,7 +52,7 @@ export default class CustomerController {
         id: returnedCustomer.customer_id, name: returnedCustomer.name, email: returnedCustomer.email
       });
 
-      res.status(201).json({ customer: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+      res.status(201).json({ customer: returnedCustomer, accessToken: `USER-KEY ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error.parent.sqlMessage, ''));
     }
@@ -97,7 +97,7 @@ export default class CustomerController {
       } else {
         return res.status(401).json(errorResponse(req, res, 401, 'USR_01', 'Email or Password is invalid.', ''));
       }
-      return res.status(200).json({ customer: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+      return res.status(200).json({ customer: returnedCustomer, accessToken: `USER-KEY ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error.parent.sqlMessage, ''));
     }

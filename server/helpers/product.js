@@ -1,10 +1,10 @@
 export default {
-  nestedPagination(products, page, limit) {
+  nestedPagination(products, page, limit = 20) {
     let offset = 0;
     if (page) {
       offset = (page - 1) * limit;
     }
-    let paginationLimit = products.length;
+    let paginationLimit = 20;
     if (limit && !page) {
       paginationLimit = limit;
     }
