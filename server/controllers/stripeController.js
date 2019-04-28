@@ -50,6 +50,20 @@ export default class StripeController {
       });
       res.status(200).json({ charge, message: 'Payment processed' });
     } catch (error) {
+      if (error.message.includes('Invalid API Key')) {
+        return res.status(401).json({
+          code: 'AUT_02',
+          message: 'The apikey is invalid.',
+          field: 'API-KEY'
+        });
+      }
+      if (error.message.includes('You cannot use a Stripe token more than once')) {
+        return res.status(500).json({
+          code: 'resource_missing',
+          message: `No such token: ${stripeToken}`,
+          field: 'source'
+        });
+      }
       return res.status(500).json(errorResponse(req, res, 500, 'STR_05', error.message, ''));
     }
   }

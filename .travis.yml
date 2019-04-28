@@ -12,7 +12,3 @@ install:
 services:
   - mysql
   - redis-server
-
-before_script:
-  - npm run migrate-undo
-  - npm run migrate

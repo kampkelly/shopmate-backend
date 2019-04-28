@@ -299,3 +299,16 @@ Example response:
 ## Testing
 
 To run the tests, run `npm run test` in the terminal.
+
+## Supporting a large number of users
+
+#### To support a large number of users, here are a couple of suggestions:
+1. Renting a server (a cloud server, AWS or Google) with great specifications. This includes the ram, storage size and how distributed it is. It should also be very reliable (99%+ uptime). 
+2. Making use of caching to reduce the number of requests to the database.
+3. Saving images and assets in a cloud storage such as Google to reduce the stress on the server. This also allows the server to have more storage space.
+
+
+
+#### When most of my users are coming from the US:
+I would need to ensure majority of my severs are from the US and regions around it. This will allow users from the US to send and retrieve data faster because where they are requesting data from is closer.
+Also, I can make use of load balancers to efficiently distribute incoming network traffic. So, if the servers from the US region are receiving very large number of requests and a server goes down, the load balancer will  redirect traffic to the remaining online servers from other regions.

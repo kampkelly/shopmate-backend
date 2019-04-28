@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import fs from 'fs';
@@ -19,8 +20,12 @@ const isProduction = process.env.NODE_ENV === 'production';
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger('dev', { stream: accessLogStream }));
+app.use(helmet());
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET,
+  name: process.env.SESSION_NAME,
   resave: true,
   saveUninitialized: true
 }));
