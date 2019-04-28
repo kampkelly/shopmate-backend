@@ -1,16 +1,12 @@
-'use strict';
+
 
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.bulkInsert('shipping_region', [
-      {shipping_region_id: 1, shipping_region: 'Please select' },
-      {shipping_region_id: 2, shipping_region: 'US / Canade' },
-      {shipping_region_id: 3, shipping_region: 'Europe' },
-      {shipping_region_id: 4, shipping_region: 'Rest of World' }
-    ], {});
-  },
+  up: queryInterface => queryInterface.bulkInsert('shipping_region', [
+    { shipping_region_id: 1, shipping_region: 'Please select' },
+    { shipping_region_id: 2, shipping_region: 'US / Canade' },
+    { shipping_region_id: 3, shipping_region: 'Europe' },
+    { shipping_region_id: 4, shipping_region: 'Rest of World' }
+  ], {}),
 
-  down: (queryInterface) => {
-    return queryInterface.bulkDelete('shipping_region', null, {});
-  }
+  down: queryInterface => queryInterface.bulkDelete('shipping_region', null, {})
 };
