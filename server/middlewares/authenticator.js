@@ -15,7 +15,7 @@ export default {
     if (!token) {
       return res.status(403).json(errorResponse(req, res, 403, 'AUT_01', ' Authorization code is empty', ''));
     }
-    if (token.split(' ')[0] !== 'Bearer') {
+    if (token.split(' ')[0] !== 'USER-KEY') {
       return res.status(403).json(errorResponse(req, res, 403, 'AUT_03', 'Invalid token supplied', ''));
     }
     // eslint-disable-next-line
