@@ -1,0 +1,18 @@
+language: node_js
+
+node_js:
+  - "11.14.0"
+
+env:
+- NODE_ENV=test
+
+install:
+  - npm install
+
+services:
+  - mysql
+  - redis-server
+
+before_script:
+  - npm run migrate-undo
+  - npm run migrate

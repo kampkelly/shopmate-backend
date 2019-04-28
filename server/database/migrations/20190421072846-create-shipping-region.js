@@ -7,7 +7,7 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    shipping_region_: {
+    shipping_region: {
       type: Sequelize.STRING(100),
       allowNull: false
     }
