@@ -13,4 +13,8 @@ router.use('/', shoppingCart);
 router.use('/', socialLogin);
 router.use('/', stripe);
 
+router.get('/', (req, res) => {
+  res.status(404).send('Welcome to Shopmate backend');
+});
+
 export default router;
