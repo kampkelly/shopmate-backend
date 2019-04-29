@@ -27,6 +27,8 @@ The app is built with the following tools/technologies:
 8. Run `npm run dev to start the server`.
 9. Visit the available endpoints.
 
+##### _The hosted link app can be accessed [here](https://shopmate-backend-api.herokuapp.com/)_
+
 ##### _The documentation for this api can be found [here](https://documenter.getpostman.com/view/7132396/S1LpaX7j)_
 
 ## Available Endpoints
