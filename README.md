@@ -302,13 +302,30 @@ To run the tests, run `npm run test` in the terminal.
 
 ## Supporting a large number of users
 
-#### To support a large number of users, here are a couple of suggestions:
-1. Renting a server (a cloud server, AWS or Google) with great specifications. This includes the ram, storage size and how distributed it is. It should also be very reliable (99%+ uptime). 
-2. Making use of caching to reduce the number of requests to the database.
-3. Saving images and assets in a cloud storage such as Google to reduce the stress on the server. This also allows the server to have more storage space.
+#### If you have a large number of users, here are a couple of suggestions:
 
+1. Rent a server (a cloud server, AWS or Google) with great specifications. This includes the ram, storage size and how distributed it is. It should also be very reliable (99%+ uptime). 
+2. Make use of caching to reduce the number of requests to the database.
+3. Save images and assets in a cloud storage such as Google to reduce the stress on the server. This also allows the server to have more storage space.
 
+#### When most of your users are coming from a specific region(US):
 
-#### When most of my users are coming from the US:
-I would need to ensure majority of my severs are from the US and regions around it. This will allow users from the US to send and retrieve data faster because where they are requesting data from is closer.
-Also, I can make use of load balancers to efficiently distribute incoming network traffic. So, if the servers from the US region are receiving very large number of requests and a server goes down, the load balancer will  redirect traffic to the remaining online servers from other regions.
+You would need to ensure majority of your severs are from that region(US) and regions around it. This will allow users from the US to send and retrieve data faster because their request location will be closer.
+Also, you can make use of load balancers to efficiently distribute incoming network traffic. So, if the servers from the US region are receiving very large number of requests and a server goes down, the load balancer will  redirect traffic to the remaining online servers from other regions.
+
+## System Design Architecture:
+
+The system architecture used for this application is the MVC project with Object Oriented Programming. This stands for Models, Views and Controllers. The model handles all database connections while controllers are responsible for the logic of the application.
+
+Several data structures were used in the application including strings, arrays, objects, etc.
+
+The stack used in building this project includes:
+- Nodejs
+- Express
+- Sequelize
+- MySQL
+- Redis
+
+Nodejs and Express are used to create the Api endpoints and the server, Redis is used for caching while MySQl is used as the database storage.
+They are used to build a Rest Api which can be consumed by a front-end application. 
+The Api endpoints used for this application can be found in the app documentation through the following link: [postman documentation](https://documenter.getpostman.com/view/7132396/S1LpaX7j)

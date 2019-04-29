@@ -1,3 +1,5 @@
+/* eslint no-restricted-globals: ["error", "event", "fdescribe"] */
+
 import asyncRedis from 'async-redis';
 import 'dotenv/config';
 import generateUniqueId from '../helpers/generateUniqueId';
@@ -88,6 +90,15 @@ export default class ShoppingCartController {
         product_id: productId,
         attributes
       } = req.body;
+      if (isNaN(productId)) {
+        return res.status(400).json({
+          error: {
+            status: 400,
+            message: 'Product id must be a number',
+            field: 'product id'
+          }
+        });
+      }
       const product = await Product.findOne({
         where: { product_id: productId },
       });
@@ -134,7 +145,12 @@ export default class ShoppingCartController {
           .setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify(formattedCartItems));
         res.status(200).json(formattedCartItems);
       } else {
-        return res.status(404).json(errorResponse(req, res, 404, 'SHP_04', 'Product cannot be found', ''));
+        return res.status(404).json({
+          error: {
+            status: 404,
+            message: 'Product cannot be found',
+          }
+        });
       }
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'SHP_05', error.parent.sqlMessage, ''));

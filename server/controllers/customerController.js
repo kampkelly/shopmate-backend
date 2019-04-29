@@ -9,6 +9,8 @@ const {
 } = Model;
 const saltRounds = 10;
 const { generateToken } = Authenticator;
+// eslint-disable-next-line
+const filter = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/;
 
 /**
  *
@@ -27,6 +29,13 @@ export default class CustomerController {
   static async RegisterCustomer(req, res) {
     try {
       const { email, name, password } = req.body;
+      if (!filter.test(email)) {
+        return res.status(400).json(errorResponse(req,
+          res, 400, 'USR_03', 'The email format is invalid.', 'email'));
+      }
+      if (email.includes(' ')) {
+        return res.status(400).json(errorResponse(req, res, 400, 'USR_03', 'The email is invalid.', 'email'));
+      }
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       const existingCustomer = await Customer.findOne({ where: { email } });
       if (existingCustomer) {
@@ -52,7 +61,7 @@ export default class CustomerController {
         id: returnedCustomer.customer_id, name: returnedCustomer.name, email: returnedCustomer.email
       });
 
-      res.status(201).json({ customer: returnedCustomer, accessToken: `USER-KEY ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+      res.status(201).json({ customer: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error.parent.sqlMessage, ''));
     }
@@ -67,6 +76,13 @@ export default class CustomerController {
   static async LoginCustomer(req, res) {
     try {
       const { email, password } = req.body;
+      if (!filter.test(email)) {
+        return res.status(400).json(errorResponse(req,
+          res, 400, 'USR_03', 'The email format is invalid.', 'email'));
+      }
+      if (email.includes(' ')) {
+        return res.status(400).json(errorResponse(req, res, 400, 'USR_03', 'The email is invalid.', 'email'));
+      }
       const customer = await Customer.findOne({ where: { email } });
       if (!customer) {
         return res.status(401).json(errorResponse(req, res, 401, 'USR_01', 'Email or Password is invalid.', ''));
@@ -97,9 +113,9 @@ export default class CustomerController {
       } else {
         return res.status(401).json(errorResponse(req, res, 401, 'USR_01', 'Email or Password is invalid.', ''));
       }
-      return res.status(200).json({ customer: returnedCustomer, accessToken: `USER-KEY ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+      return res.status(200).json({ customer: returnedCustomer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error.parent.sqlMessage, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'USR_500', error.parent.sqlMessage, ''));
     }
   }
 
@@ -117,26 +133,10 @@ export default class CustomerController {
         return res.status(404).json(errorResponse(req, res, 404, 'USR_04', 'Customer does not exist', ''));
       }
       const updatedCustomer = await customer.update(req.body);
-      let returnedCustomer = updatedCustomer;
-      returnedCustomer = Object.assign({
-        customer_id: updatedCustomer.dataValues.customer_id,
-        name: updatedCustomer.dataValues.name,
-        email: updatedCustomer.dataValues.email,
-        address_1: updatedCustomer.dataValues.address_1,
-        address_2: updatedCustomer.dataValues.address_2,
-        city: updatedCustomer.dataValues.city,
-        region: updatedCustomer.dataValues.region,
-        postal_code: updatedCustomer.dataValues.postal_code,
-        country: updatedCustomer.dataValues.country,
-        shipping_region_id: updatedCustomer.dataValues.shipping_region_id,
-        credit_Card: updatedCustomer.dataValues.credit_card,
-        day_phone: updatedCustomer.dataValues.day_phone,
-        eve_phone: updatedCustomer.dataValues.eve_phone,
-        mob_phone: updatedCustomer.dataValues.mob_phone
-      }, {});
-      return res.status(200).json(returnedCustomer);
+      delete updatedCustomer.dataValues.password;
+      return res.status(200).json(updatedCustomer);
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'USR_05', error, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'USR_500', error, ''));
     }
   }
 }

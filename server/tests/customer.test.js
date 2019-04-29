@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 let validToken = '';
 
 const customer = {
-  email: 'mack41@hotmail.com',
+  email: 'mack@hotmail.com',
   name: 'testuser',
   password: 'Password1!'
 };
@@ -77,8 +77,8 @@ describe('Customers', () => {
         expect(res.status).to.equal(400);
         expect(res.body).to.be.an('object');
         expect(res.body.error.message).to.be.an('array');
-        expect(res.body.error.message[0]).to.include('Name is required');
-        expect(res.body.error.message[2]).to.include('Password must be at least 6 characters');
+        expect(res.body.error.message).to.include('Name is required');
+        expect(res.body.error.message).to.include('Password must be at least 6 characters');
         done();
       });
   });
@@ -127,13 +127,13 @@ describe('Customers', () => {
   it('Should update a customer', (done) => {
     chai.request(app)
       .put('/customers/address')
-      .set('Authorization', validToken)
+      .set('USER-KEY', validToken)
       .send(customerAddressInfo)
       .end((err, res) => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('object');
         expect(res.body.name).to.be.a('string');
-        expect(res.body.email).to.be.equal('mack41@hotmail.com');
+        expect(res.body.email).to.be.equal('mack@hotmail.com');
         done();
       });
   });

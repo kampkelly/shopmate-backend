@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import stripe from 'stripe';
-import emailTemplates from '../helpers/emailTemplates';
-import sendMail from '../helpers/sendMail';
+import emailTemplates from '../helpers/mail/emailTemplates';
+import sendMail from '../helpers/mail/sendMail';
 import errorResponse from '../helpers/errorResponse';
 
 const keySecret = process.env.STRIPE_SECRET_KEY;
@@ -26,13 +26,13 @@ export default class StripeController {
     */
   static async payWithStripe(req, res) {
     const {
-      stripeToken, order_id: orderId, description, amount, currency
+      order_id: orderId, description, amount, currency, stripeToken
     } = req.body;
     const { email } = req.user;
     try {
       const customer = await Stripe.customers.create({
         email,
-        source: stripeToken
+        source: stripeToken.id
       });
       const charge = await Stripe.charges.create({
         amount,
@@ -46,7 +46,7 @@ export default class StripeController {
         to: email,
         subject: 'Confirmation On Your Order',
         text: confirmationTemplateText(req.user.name, process.env.BASE_URL),
-        html: confirmationTemplateHtml
+        html: confirmationTemplateHtml(req.user.name, process.env.BASE_URL)
       });
       res.status(200).json({ charge, message: 'Payment processed' });
     } catch (error) {
@@ -64,7 +64,7 @@ export default class StripeController {
           field: 'source'
         });
       }
-      return res.status(500).json(errorResponse(req, res, 500, 'STR_05', error.message, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'STR_500', error.message, ''));
     }
   }
 }
