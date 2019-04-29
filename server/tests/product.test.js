@@ -86,7 +86,7 @@ describe('Products', () => {
       .end((err, res) => {
         expect(res.status).to.equal(404);
         expect(res.body).to.be.an('object');
-        expect(res.body.error.message).to.include('Category with this Id does not exist');
+        expect(res.body.error.message).to.include('Don\'t exist category with this ID');
         done();
       });
   });

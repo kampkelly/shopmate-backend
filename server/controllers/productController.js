@@ -33,14 +33,14 @@ export default class ProductController {
     try {
       const query = {
         where: Sequelize.where(Sequelize.fn('char_length', Sequelize.col('description')), '<=', 200),
-        limit: 19,
+        limit: 20,
         offset: 0
       };
       if (req.query.limit) {
-        query.limit = parseInt(req.query.limit) - 1;
+        query.limit = parseInt(req.query.limit);
       }
       if (req.query.page) {
-        query.offset = parseInt(query.limit) * (parseInt(req.query.page) - 1);
+        query.offset = parseInt(query.limit) * ((parseInt(req.query.page) - 1));
       }
       const { description_length: descriptionLength } = req.query;
       query.attributes = ['product_id', 'name', 'description', 'price', 'discounted_price', 'thumbnail'];
@@ -54,7 +54,7 @@ export default class ProductController {
       redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'PRD_500', error.parent.sqlMessage, ''));
     }
   }
 
@@ -66,7 +66,16 @@ export default class ProductController {
     */
   static async viewSingleProduct(req, res) {
     try {
-      const { productId } = req.params;
+      const { product_id: productId } = req.params;
+      if (isNaN(productId)) {
+        return res.status(400).json({
+          error: {
+            status: 400,
+            message: 'Product id must be a number',
+            field: 'product id'
+          }
+        });
+      }
       const product = await Product.findOne({
         where: { product_id: productId },
         attributes: [
@@ -82,11 +91,16 @@ export default class ProductController {
         ]
       });
       if (!product) {
-        return res.status(404).json(errorResponse(req, res, 404, 'PRD_04', 'Product cannot be found', ''));
+        return res.status(404).json({
+          error: {
+            status: 404,
+            message: 'Product cannot be found',
+          }
+        });
       }
       return res.status(200).json(product);
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'PRD_500', error.parent.sqlMessage, ''));
     }
   }
 
@@ -99,6 +113,7 @@ export default class ProductController {
   static async getProductsInCategory(req, res) {
     try {
       const { categoryId } = req.params;
+      if (isNaN(categoryId)) res.status(400).json(errorResponse(req, res, 400, '', 'The ID is not a number.', 'id'));
       const { page, limit, description_length: descriptionLength } = req.query;
       const query = {
         where: { category_id: categoryId },
@@ -118,7 +133,7 @@ export default class ProductController {
       };
       const category = await Category.findOne(query);
       if (!category) {
-        return res.status(404).json(errorResponse(req, res, 404, 'CAT_01', 'Category with this Id does not exist', 'id'));
+        return res.status(404).json(errorResponse(req, res, 404, 'CAT_01', 'Don\'t exist category with this ID', 'category id'));
       }
       let rows = [];
       rows = nestedPagination(category.Products, page, limit);
@@ -129,7 +144,7 @@ export default class ProductController {
       redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'CAT_05', error.parent.sqlMessage, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'CAT_500', error.parent.sqlMessage, ''));
     }
   }
 
@@ -218,7 +233,7 @@ export default class ProductController {
       redisClient.setex(req.cacheKey, process.env.REDIS_TIMEOUT, JSON.stringify({ count, rows }));
       return res.status(200).json({ count, rows });
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'PRD_05', error.parent.sqlMessage, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'PRD_500', error.parent.sqlMessage, ''));
     }
   }
 }

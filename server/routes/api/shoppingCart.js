@@ -1,6 +1,6 @@
 import express from 'express';
 import ShoppingCartController from '../../controllers/shoppingCartController';
-import { addCacheKey, allItemsInShoppingCartCaching } from '../../middlewares/shoppingCartCaching';
+import { addCacheKey, allItemsInShoppingCartCaching } from '../../middlewares/caching/shoppingCartCaching';
 
 const router = express.Router();
 router.get('/shoppingcart/generateUniqueId', ShoppingCartController.generateUniqueId);

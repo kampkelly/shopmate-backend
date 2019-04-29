@@ -67,8 +67,8 @@ export default class SocialLoginController {
     const customer = { customerId, email, name };
     const token = generateToken(customer);
     if (req.user.created) {
-      res.status(201).json({ customer, accessToken: `USER-KEY ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+      res.status(201).json({ customer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
     }
-    res.status(200).json({ customer, accessToken: `USER-KEY ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
+    res.status(200).json({ customer, accessToken: `Bearer ${token}`, expires_in: process.env.TOKEN_EXPIRATION });
   }
 }
