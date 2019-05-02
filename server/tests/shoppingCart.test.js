@@ -22,8 +22,22 @@ const cartDetailsWithInvalidProductId = {
   product_id: 1001,
   attributes: 'color'
 };
+
+const customer = {
+  email: 'mack@hotmail.com',
+  name: 'testuser',
+  password: 'Password1!'
+};
+
+const orderInfo = {
+  cart_id: '',
+  shipping_id: 3,
+  tax_id: 2
+};
+
 let cartQuantity = 0;
 let cartLength = 0;
+let validToken = '';
 
 describe('Shopping Cart', () => {
   it('Should generate a unique id', (done) => {
@@ -36,6 +50,7 @@ describe('Shopping Cart', () => {
         expect(res.body.cart_id).to.have.lengthOf(18);
         cartDetails.cart_id = res.body.cart_id;
         cartDetailsUpdate.cart_id = res.body.cart_id;
+        orderInfo.cart_id = res.body.cart_id;
         done();
       });
   });
@@ -69,7 +84,7 @@ describe('Shopping Cart', () => {
       });
   });
 
-  it('Should add new product in cart cart id and attribute or attribute differs', (done) => {
+  it('Should add new product in cart if cart id and attribute or attribute differs', (done) => {
     chai.request(app)
       .post('/shoppingcart/add')
       .send(cartDetailsUpdate)
@@ -99,6 +114,35 @@ describe('Shopping Cart', () => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array');
         expect(res.body[0].item_id).to.be.an('number');
+        done();
+      });
+  });
+
+  it('Should login a customer to create an order', (done) => {
+    chai.request(app)
+      .post('/customers/login')
+      .send(customer)
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.customer).to.be.an('object');
+        expect(res.body.customer.name).to.be.a('string');
+        expect(res.body.accessToken).to.be.a('string');
+        validToken = res.body.accessToken;
+        done();
+      });
+  });
+
+  it('Should create an order', (done) => {
+    chai.request(app)
+      .post('/orders')
+      .set('USER-KEY', validToken)
+      .send(orderInfo)
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.orderId).to.be.a('number');
+        expect(res.body.orderId).to.equal(1);
         done();
       });
   });
