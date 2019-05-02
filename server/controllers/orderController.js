@@ -85,7 +85,35 @@ export default class OrderController {
         orderId: order.order_id
       });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json(errorResponse(req, res, 500, 'ORD_500', error.parent.sqlMessage, ''));
+    }
+  }
+
+  /**
+    * @description -This method gets the orders of a customer
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {array} - orders
+    */
+  static async ordersByCustomer(req, res) {
+    try {
+      let orders = await Order.findAll({
+        where: { customer_id: req.user.id },
+        attributes: [
+          'order_id',
+          'total_amount',
+          'created_on',
+          'shipped_on',
+          'status',
+          'name'
+        ]
+      });
+      orders = orders.map((order) => {
+        order.setDataValue('name', req.user.name);
+        return order;
+      });
+      res.status(200).json(orders);
+    } catch (error) {
       return res.status(500).json(errorResponse(req, res, 500, 'ORD_500', error.parent.sqlMessage, ''));
     }
   }

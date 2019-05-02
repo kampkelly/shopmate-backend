@@ -6,5 +6,6 @@ const { confirmToken } = Authenticator;
 
 const router = express.Router();
 router.post('/orders', confirmToken, OrderController.createOrder);
+router.get('/orders/inCustomer', confirmToken, OrderController.ordersByCustomer);
 
 export default router;
