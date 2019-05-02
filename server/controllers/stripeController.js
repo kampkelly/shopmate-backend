@@ -3,6 +3,9 @@ import stripe from 'stripe';
 import emailTemplates from '../helpers/mail/emailTemplates';
 import sendMail from '../helpers/mail/sendMail';
 import errorResponse from '../helpers/errorResponse';
+import Model from '../database/models';
+
+const { Order } = Model;
 
 const keySecret = process.env.STRIPE_SECRET_KEY;
 const Stripe = stripe(keySecret);
@@ -30,25 +33,45 @@ export default class StripeController {
     } = req.body;
     const { email } = req.user;
     try {
-      const customer = await Stripe.customers.create({
-        email,
-        source: stripeToken.id
-      });
-      const charge = await Stripe.charges.create({
-        amount,
-        description,
-        currency,
-        customer: customer.id,
-        metadata: { order_id: orderId },
-      });
-      sendMail({
-        from: process.env.MAIL_SENDER,
-        to: email,
-        subject: 'Confirmation On Your Order',
-        text: confirmationTemplateText(req.user.name, process.env.BASE_URL),
-        html: confirmationTemplateHtml(req.user.name, process.env.BASE_URL)
-      });
-      res.status(200).json({ charge, message: 'Payment processed' });
+      const order = await Order.findOne({ where: { order_id: orderId } });
+      if (order && order.dataValues.status === 0) {
+        const customer = await Stripe.customers.create({
+          email,
+          source: stripeToken
+        });
+        const charge = await Stripe.charges.create({
+          amount,
+          description,
+          currency,
+          customer: customer.id,
+          metadata: { order_id: orderId },
+        });
+        await order.update({ status: 1 });
+        sendMail({
+          from: process.env.MAIL_SENDER,
+          to: email,
+          subject: 'Confirmation On Your Order',
+          text: confirmationTemplateText(req.user.name, process.env.BASE_URL),
+          html: confirmationTemplateHtml(req.user.name, process.env.BASE_URL)
+        });
+        res.status(200).json({ charge, message: 'Payment processed' });
+      } else if (order && order.dataValues.status === 1) {
+        return res.status(422).json({
+          error: {
+            status: 422,
+            message: 'Order has already been completed',
+            field: 'order id'
+          }
+        });
+      } else {
+        return res.status(404).json({
+          error: {
+            status: 404,
+            message: 'Order id does not exist',
+            field: 'order id'
+          }
+        });
+      }
     } catch (error) {
       if (error.message.includes('Invalid API Key')) {
         return res.status(401).json({
