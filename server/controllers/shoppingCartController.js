@@ -111,7 +111,7 @@ export default class ShoppingCartController {
             cart_id: cartId,
             product_id: productId,
             quantity: 1,
-            added_on: '2019-04-22 22:00:23',
+            added_on: new Date().toLocaleString(),
             attribute: attributes,
           });
         } else {
