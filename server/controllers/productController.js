@@ -1,6 +1,6 @@
 /* eslint no-restricted-globals: ["error", "event", "fdescribe"] */
 
-import Sequelize, { Op } from 'sequelize';
+import { Op } from 'sequelize';
 import asyncRedis from 'async-redis';
 import 'dotenv/config';
 import Model from '../database/models';
@@ -32,7 +32,6 @@ export default class ProductController {
   static async viewAllProducts(req, res) {
     try {
       const query = {
-        where: Sequelize.where(Sequelize.fn('char_length', Sequelize.col('description')), '<=', 200),
         limit: 20,
         offset: 0
       };
