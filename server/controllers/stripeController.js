@@ -90,4 +90,36 @@ export default class StripeController {
       return res.status(500).json(errorResponse(req, res, 500, 'STR_500', error.message, ''));
     }
   }
+
+  /**
+    * @description -This method returns webhook from Stripe
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - webhook details
+    */
+  static async webhook(req, res) {
+    return res.status(200).json({ received: true });
+  }
+
+  /**
+    * @description -This method returns a Stripe token
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - get token
+    */
+  static async getToken(req, res) {
+    try {
+      const token = await Stripe.tokens.create({
+        card: {
+          number: '4242424242424242',
+          exp_month: 12,
+          exp_year: 2020,
+          cvc: '123'
+        }
+      });
+      res.status(200).send({ stripeToken: token.id });
+    } catch (error) {
+      res.status(404).send({ error });
+    }
+  }
 }
