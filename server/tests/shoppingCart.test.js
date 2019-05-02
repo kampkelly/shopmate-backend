@@ -147,6 +147,18 @@ describe('Shopping Cart', () => {
       });
   });
 
+  it('Should get a customer order', (done) => {
+    chai.request(app)
+      .get('/orders/inCustomer')
+      .set('USER-KEY', validToken)
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('array');
+        expect(res.body[0].order_id).to.equal(1);
+        done();
+      });
+  });
+
   it('Should empty the cart', (done) => {
     chai.request(app)
       .delete(`/shoppingcart/empty/${cartDetails.cart_id}`)
