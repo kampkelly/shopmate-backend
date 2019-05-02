@@ -27,7 +27,7 @@ The app is built with the following tools/technologies:
 8. Run `npm run dev to start the server`.
 9. Visit the available endpoints.
 
-##### _The hosted link app can be accessed [here](https://shopmate-backend-api.herokuapp.com/)_
+##### _The hosted app can be accessed [here](https://shopmate-backend-api.herokuapp.com/)_
 
 ##### _The documentation for this api can be found [here](https://documenter.getpostman.com/view/7132396/S1LpaX7j)_
 
@@ -295,6 +295,70 @@ Example response:
 ```
 {
      ...
+}
+```
+
+## Additional Endpoints
+
+### Create an order
+N.B: Authentication is required
+
+*Post request to: `orders`*
+Body:
+```
+{
+        "cart_id": "tyy4amqpi3axkimrci",
+	"shipping_id": "3",
+	"tax_id": 2
+}
+```
+
+Example response: 
+```
+{
+     orderId: 'id
+}
+```
+
+### Get orders by a customer
+
+N.B: Authentication is required
+
+*Get request to: `orders/inCustomer`*
+
+Example response: 
+```
+[
+    {
+        "order_id": 'id,
+        "total_amount": "...",
+        "created_on": "...",
+        "shipped_on": null,
+        "status": 0,
+        "name": "..."
+    }
+]
+```
+
+### Stripe webhook
+
+*Get request to: `stripe/webhooks`*
+
+Example response: 
+```
+{
+    "received": true
+}
+```
+
+### Get a stripe token
+
+*Get request to: `stripe/getToken`*
+
+Example response: 
+```
+{
+    "stripeToken": "..."
 }
 ```
 

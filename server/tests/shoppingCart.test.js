@@ -35,6 +35,12 @@ const orderInfo = {
   tax_id: 2
 };
 
+const invalidOrderInfo = {
+  cart_id: '',
+  shipping_id: '3',
+  tax_id: 2
+};
+
 let cartQuantity = 0;
 let cartLength = 0;
 let validToken = '';
@@ -143,6 +149,21 @@ describe('Shopping Cart', () => {
         expect(res.body).to.be.an('object');
         expect(res.body.orderId).to.be.a('number');
         expect(res.body.orderId).to.equal(1);
+        done();
+      });
+  });
+
+  it('Should not create an order with bad request', (done) => {
+    chai.request(app)
+      .post('/orders')
+      .set('USER-KEY', validToken)
+      .send(invalidOrderInfo)
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.body).to.be.an('object');
+        expect(res.body.error.message).to.be.an('array');
+        expect(res.body.error.message).to.include('Cart id is required');
+        expect(res.body.error.message).to.include('Shipping id must be a number');
         done();
       });
   });

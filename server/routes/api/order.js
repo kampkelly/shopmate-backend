@@ -1,11 +1,12 @@
 import express from 'express';
 import OrderController from '../../controllers/orderController';
 import Authenticator from '../../middlewares/authenticator';
+import validateOrderFields from '../../middlewares/orderValidator';
 
 const { confirmToken } = Authenticator;
 
 const router = express.Router();
-router.post('/orders', confirmToken, OrderController.createOrder);
+router.post('/orders', confirmToken, validateOrderFields, OrderController.createOrder);
 router.get('/orders/inCustomer', confirmToken, OrderController.ordersByCustomer);
 
 export default router;
