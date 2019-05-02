@@ -301,6 +301,7 @@ Example response:
 ## Additional Endpoints
 
 ### Create an order
+
 N.B: Authentication is required
 
 *Post request to: `orders`*
@@ -340,6 +341,28 @@ Example response:
 ]
 ```
 
+### Get order info
+
+N.B: Authentication is required
+
+*Get request to: `orders/:order_id`*
+
+Example response: 
+```
+[
+    {
+        "order_id": 'id,
+        "product_id": 2,
+        "attributes": "...",
+        "product_name": "...",
+        "quantity": 1,
+        "unit_cost": "...",
+        "subtotal": "..."
+    },
+    ...
+]
+```
+
 ### Stripe webhook
 
 *Get request to: `stripe/webhooks`*
@@ -353,6 +376,8 @@ Example response:
 
 ### Get a stripe token
 
+N.B: Authentication is required
+
 *Get request to: `stripe/getToken`*
 
 Example response: 
@@ -360,6 +385,38 @@ Example response:
 {
     "stripeToken": "..."
 }
+```
+
+### Get shipping regions
+
+*Get request to: `shipping/regions`*
+
+Example response: 
+```
+[
+    {
+        "shipping_region_id": 'id',
+        "shipping_region": "..."
+    },
+    ...
+]
+```
+
+### Get shipping for a shipping region
+
+*Get request to: `shipping/regions/:shipping_region_id`*
+
+Example response: 
+```
+[
+    {
+        "shipping_id": 'id',
+        "shipping_type": "...",
+        "shipping_cost": "...",
+        "shipping_region_id": 'id'
+    },
+    ...
+]
 ```
 
 ## Testing
