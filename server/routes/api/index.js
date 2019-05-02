@@ -5,6 +5,7 @@ import shoppingCart from './shoppingCart';
 import socialLogin from './socialLogin';
 import stripe from './stripe';
 import order from './order';
+import shippingRegion from './shippingRegion';
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.use('/', shoppingCart);
 router.use('/', socialLogin);
 router.use('/', stripe);
 router.use('/', order);
+router.use('/', shippingRegion);
 
 router.get('/', (req, res) => {
   res.status(404).send('Welcome to Shopmate backend');
