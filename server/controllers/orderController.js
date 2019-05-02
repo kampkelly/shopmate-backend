@@ -1,7 +1,9 @@
 import 'dotenv/config';
+import asyncRedis from 'async-redis';
 import Model from '../database/models';
 import errorResponse from '../helpers/errorResponse';
 
+const redisClient = asyncRedis.createClient(process.env.REDIS_URL);
 const {
   Order, OrderDetail, Product, ShoppingCart
 } = Model;
@@ -81,6 +83,7 @@ export default class OrderController {
       await ShoppingCart.destroy({
         where: { cart_id: cartId }
       });
+      redisClient.del(req.cacheKey);
       res.status(200).json({
         orderId: order.order_id
       });
@@ -138,7 +141,7 @@ export default class OrderController {
         });
       }
       const order = await Order.findOne({
-        where: { order_id: orderId },
+        where: { order_id: orderId, customer_id: req.user.id },
         attributes: [],
         include: [{
           model: OrderDetail,

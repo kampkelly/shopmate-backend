@@ -33,7 +33,7 @@ export default class StripeController {
     } = req.body;
     const { email } = req.user;
     try {
-      const order = await Order.findOne({ where: { order_id: orderId } });
+      const order = await Order.findOne({ where: { order_id: orderId, customer_id: req.user.id } });
       if (order && order.dataValues.status === 0) {
         const customer = await Stripe.customers.create({
           email,
