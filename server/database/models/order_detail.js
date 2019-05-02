@@ -38,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       targetKey: 'order_id',
       onDelete: 'CASCADE'
     });
+    OrderDetail.belongsTo(models.Product, {
+      foreignKey: 'product_id',
+      targetKey: 'product_id',
+      onDelete: 'CASCADE'
+    });
   };
   return OrderDetail;
 };

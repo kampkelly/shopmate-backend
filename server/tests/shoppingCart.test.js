@@ -44,6 +44,7 @@ const invalidOrderInfo = {
 let cartQuantity = 0;
 let cartLength = 0;
 let validToken = '';
+let orderId = 0;
 
 describe('Shopping Cart', () => {
   it('Should generate a unique id', (done) => {
@@ -176,6 +177,31 @@ describe('Shopping Cart', () => {
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array');
         expect(res.body[0].order_id).to.equal(1);
+        orderId = res.body[0].order_id;
+        done();
+      });
+  });
+
+  it('Should get order info', (done) => {
+    chai.request(app)
+      .get(`/orders/${orderId}`)
+      .set('USER-KEY', validToken)
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body).to.be.an('array');
+        expect(res.body[0].order_id).to.equal(1);
+        done();
+      });
+  });
+
+  it('Should not get order info if order id does not exist', (done) => {
+    chai.request(app)
+      .get('/orders/20')
+      .set('USER-KEY', validToken)
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body).to.be.an('object');
+        expect(res.body.error.message).to.include('Order id does not exist');
         done();
       });
   });
