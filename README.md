@@ -29,7 +29,7 @@ The app is built with the following tools/technologies:
 
 ##### _The hosted app can be accessed [here](https://shopmate-backend-api.herokuapp.com/)_
 
-##### _The documentation for this api can be found [here](https://documenter.getpostman.com/view/7132396/S1LpaX7j)_
+##### _The documentation for this api can be found [here](https://documenter.getpostman.com/view/7132396/S1LsYVz3)_
 
 ## Available Endpoints
 
@@ -451,4 +451,4 @@ The stack used in building this project includes:
 
 Nodejs and Express are used to create the Api endpoints and the server, Redis is used for caching while MySQl is used as the database storage.
 They are used to build a Rest Api which can be consumed by a front-end application. 
-The Api endpoints used for this application can be found in the app documentation through the following link: [postman documentation](https://documenter.getpostman.com/view/7132396/S1LpaX7j)
+The Api endpoints used for this application can be found in the app documentation through the following link: [postman documentation](https://documenter.getpostman.com/view/7132396/S1LsYVz3)
