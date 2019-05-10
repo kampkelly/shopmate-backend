@@ -501,6 +501,22 @@ Example response:
 }
 ```
 
+### Get the categories of a department
+
+*Get request to: `/categories/inDepartment/:department_id`*
+
+Example response: 
+```
+[
+    {
+        "category_id": id,
+        "name",
+        "description",
+        "department_id": id
+    }
+]
+```
+
 ## Testing
 
 To run the tests, run `npm run test` in the terminal.
@@ -533,7 +549,7 @@ The stack used in building this project includes:
 
 You can view the system diagram below:
 <div class="something" markdown="1">
-<img src="https://i.imgur.com/HTPVR4M.png" alt="drawing" width="600" />
+<img src="https://i.imgur.com/s2MOYEo.png" alt="drawing" width="600" />
 </div>
 
 Nodejs and Express are used to create the Api endpoints and the server, Redis is used for caching while MySQl is used as the database storage.

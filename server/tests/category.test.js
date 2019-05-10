@@ -90,4 +90,34 @@ describe('Categories', () => {
         done();
       });
   });
+
+  it('Should get the category of a department', (done) => {
+    chai.request(app)
+      .get('/categories/inDepartment/1')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body[0].name).to.equal('French');
+        done();
+      });
+  });
+
+  it('Should show 404 if department does not exist when getting the category of a department', (done) => {
+    chai.request(app)
+      .get('/categories/inDepartment/10')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body.error.message).to.equal('Department cannot be found');
+        done();
+      });
+  });
+
+  it('Should show 400 if department id is not a number when getting category of a department', (done) => {
+    chai.request(app)
+      .get('/categories/inDepartment/1nn')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.body.error.message).to.equal('The ID is not a number.');
+        done();
+      });
+  });
 });

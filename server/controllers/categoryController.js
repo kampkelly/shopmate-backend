@@ -7,7 +7,7 @@ import errorResponse from '../helpers/errorResponse';
 
 const redisClient = asyncRedis.createClient(process.env.REDIS_URL);
 const {
-  Category, Product
+  Category, Department, Product
 } = Model;
 
 /**
@@ -100,9 +100,7 @@ export default class CategoryController {
       if (isNaN(productId)) res.status(400).json(errorResponse(req, res, 400, '', 'The ID is not a number.', 'id'));
       const product = await Product.findOne({
         where: { product_id: productId },
-        attributes: [
-          'product_id'
-        ],
+        attributes: [],
         include: [{
           model: Category,
           attributes: [
@@ -120,6 +118,43 @@ export default class CategoryController {
         error: {
           status: 404,
           message: 'Product cannot be found',
+        }
+      });
+    } catch (error) {
+      return res.status(500).json(errorResponse(req, res, 500, 'CAT_500', error.parent.sqlMessage, ''));
+    }
+  }
+
+  /**
+    * @description -This method gets the category of a product
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {array} - category
+    */
+  static async getDepartmentCategory(req, res) {
+    try {
+      const { department_id: departmentId } = req.params;
+      if (isNaN(departmentId)) res.status(400).json(errorResponse(req, res, 400, '', 'The ID is not a number.', 'id'));
+      const department = await Department.findOne({
+        where: { department_id: departmentId },
+        attributes: [],
+        include: [{
+          model: Category,
+          attributes: [
+            'category_id',
+            'name',
+            'description',
+            'department_id'
+          ]
+        }]
+      });
+      if (department) {
+        return res.status(200).json(department.Categories);
+      }
+      return res.status(404).json({
+        error: {
+          status: 404,
+          message: 'Department cannot be found',
         }
       });
     } catch (error) {
