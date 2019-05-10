@@ -33,4 +33,28 @@ export default class DepartmentController {
       return res.status(500).json(errorResponse(req, res, 500, 'DEP_500', error.parent.sqlMessage, ''));
     }
   }
+
+  /**
+    * @description -This method views a single department
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - department
+    */
+  static async viewSingleDepartment(req, res) {
+    try {
+      const { department_id: departmentId } = req.params;
+      const department = await Department.findOne({ where: { department_id: departmentId } });
+      if (department) {
+        return res.status(200).json(department);
+      }
+      return res.status(404).json({
+        error: {
+          status: 404,
+          message: 'Department cannot be found',
+        }
+      });
+    } catch (error) {
+      return res.status(500).json(errorResponse(req, res, 500, 'DEP_500', error.parent.sqlMessage, ''));
+    }
+  }
 }
