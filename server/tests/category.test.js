@@ -41,12 +41,52 @@ describe('Categories', () => {
       });
   });
 
+  it('Should show 400 if category id is not a number when getting a category', (done) => {
+    chai.request(app)
+      .get('/categories/1nn')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.body.error.message).to.equal('The ID is not a number.');
+        done();
+      });
+  });
+
   it('Should show 404 if no category with given id', (done) => {
     chai.request(app)
       .get('/categories/10')
       .end((err, res) => {
         expect(res.status).to.equal(404);
         expect(res.body.error.message).to.equal('Category cannot be found');
+        done();
+      });
+  });
+
+  it('Should get the category of a product', (done) => {
+    chai.request(app)
+      .get('/categories/inProduct/1')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body[0].name).to.equal('French');
+        done();
+      });
+  });
+
+  it('Should show 404 if product does not exist when getting the category of a product', (done) => {
+    chai.request(app)
+      .get('/categories/inProduct/10')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body.error.message).to.equal('Product cannot be found');
+        done();
+      });
+  });
+
+  it('Should show 400 if product id is not a number when getting category of a product', (done) => {
+    chai.request(app)
+      .get('/categories/inProduct/1nn')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.body.error.message).to.equal('The ID is not a number.');
         done();
       });
   });

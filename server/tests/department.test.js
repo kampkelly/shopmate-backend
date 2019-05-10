@@ -37,4 +37,14 @@ describe('Departments', () => {
         done();
       });
   });
+
+  it('Should show 400 if department id is not a number', (done) => {
+    chai.request(app)
+      .get('/departments/1nn')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(res.body.error.message).to.equal('The ID is not a number.');
+        done();
+      });
+  });
 });

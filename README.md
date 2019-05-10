@@ -179,7 +179,7 @@ Example response:
 
 *Get request to: `/products/inDepartment/:departmentId`*
 
-#### Get products in category (with filters)
+#### Get products in department (with filters)
 
 *Get request to: `/products/inDepartment/:departmentId?page=3&limit=23&description_length=51`*
 
@@ -419,6 +419,88 @@ Example response:
 ]
 ```
 
+### Get all categories
+
+*Get request to: `/categories`*
+
+#### Get categories (with filters)
+
+*Get request to: `/categories/?page=3&limit=23&description_length=51`*
+
+Example response: 
+```
+{
+    "count": 7,
+    "rows": [
+        {
+            "category_id": id,
+            "department_id": id,
+            "name": "...",
+            "description": "..."
+        },
+        ...
+     ]
+}
+```
+
+### Get a single category
+
+*Get request to: `/categories/:category_id`*
+
+Example response: 
+```
+{
+    "category_id": id,
+    "name": "...",
+    "description": "...",
+    "department_id": id
+}
+```
+
+### Get the category of a product
+
+*Get request to: `/categories/inProduct/:product_id`*
+
+Example response: 
+```
+[
+    {
+        "category_id": id,
+        "department_id": id,
+        "name": "..."
+    }
+]
+```
+
+### Get all departments
+
+*Get request to: `/departments`*
+
+Example response: 
+```
+[
+        {
+            "department_id": id,
+            "name": "...",
+            "description": "..."
+        },
+        ...
+]
+```
+
+### Get a single department
+
+*Get request to: `/departments/:department_id`*
+
+Example response: 
+```
+{
+    "department_id": id,
+    "name": "...",
+    "description": "..."
+}
+```
+
 ## Testing
 
 To run the tests, run `npm run test` in the terminal.
@@ -448,6 +530,11 @@ The stack used in building this project includes:
 - Sequelize
 - MySQL
 - Redis
+
+You can view the system diagram below:
+<div class="something" markdown="1">
+<img src="https://i.imgur.com/HTPVR4M.png" alt="drawing" width="600" />
+</div>
 
 Nodejs and Express are used to create the Api endpoints and the server, Redis is used for caching while MySQl is used as the database storage.
 They are used to build a Rest Api which can be consumed by a front-end application. 
