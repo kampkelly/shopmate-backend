@@ -51,7 +51,39 @@ export default class CategoryController {
       }));
       return res.status(200).json({ count, rows: categories });
     } catch (error) {
-      return res.status(500).json(errorResponse(req, res, 500, 'PRD_500', error.parent.sqlMessage, ''));
+      return res.status(500).json(errorResponse(req, res, 500, 'CAT_500', error.parent.sqlMessage, ''));
+    }
+  }
+
+  /**
+    * @description -This method views a single category
+    * @param {object} req - The request payload sent from the router
+    * @param {object} res - The response payload sent back from the controller
+    * @returns {object} - category
+    */
+  static async viewSingleCategory(req, res) {
+    try {
+      const { category_id: categoryId } = req.params;
+      const category = await Category.findOne({
+        where: { category_id: categoryId },
+        attributes: [
+          'category_id',
+          'name',
+          'description',
+          'department_id'
+        ]
+      });
+      if (category) {
+        return res.status(200).json(category);
+      }
+      return res.status(404).json({
+        error: {
+          status: 404,
+          message: 'Category cannot be found',
+        }
+      });
+    } catch (error) {
+      return res.status(500).json(errorResponse(req, res, 500, 'CAT_500', error.parent.sqlMessage, ''));
     }
   }
 }
