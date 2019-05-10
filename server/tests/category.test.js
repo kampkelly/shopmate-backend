@@ -30,4 +30,24 @@ describe('Categories', () => {
         done();
       });
   });
+
+  it('Should get a single category', (done) => {
+    chai.request(app)
+      .get('/categories/1')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body.name).to.equal('French');
+        done();
+      });
+  });
+
+  it('Should show 404 if no category with given id', (done) => {
+    chai.request(app)
+      .get('/categories/10')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body.error.message).to.equal('Category cannot be found');
+        done();
+      });
+  });
 });
