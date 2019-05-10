@@ -17,4 +17,24 @@ describe('Departments', () => {
         done();
       });
   });
+
+  it('Should get a single department', (done) => {
+    chai.request(app)
+      .get('/departments/1')
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        expect(res.body.name).to.equal('Regional');
+        done();
+      });
+  });
+
+  it('Should show 404 if no department with given id', (done) => {
+    chai.request(app)
+      .get('/departments/10')
+      .end((err, res) => {
+        expect(res.status).to.equal(404);
+        expect(res.body.error.message).to.equal('Department cannot be found');
+        done();
+      });
+  });
 });
