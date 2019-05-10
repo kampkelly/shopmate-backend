@@ -145,5 +145,5 @@ describe('Customers', () => {
         expect(res.status).to.equal(200);
         done();
       });
-  }).timeout(10000);
+  }).timeout(30000);
 });

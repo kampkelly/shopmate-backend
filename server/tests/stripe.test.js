@@ -49,6 +49,6 @@ describe('Customers', () => {
         expect(res.body.stripeToken).to.be.a('string');
         done();
       })
-      .timeout(10000);
+      .timeout(20000);
   });
 });
