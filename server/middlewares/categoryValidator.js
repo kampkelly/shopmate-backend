@@ -5,14 +5,10 @@ import errorResponse from '../helpers/errorResponse';
 export default {
   validateQueryParams(req, res, next) {
     const {
-      description_length: descriptionLength, limit, page, query_string: queryString
+      limit, page, order
     } = req.query;
     const errors = [];
     req.cacheKeyPrefix = '';
-    if (descriptionLength) {
-      req.cacheKeyPrefix = `${req.cacheKeyPrefix}-d${descriptionLength}`;
-      if (isNaN(descriptionLength)) errors.push('Description length must be a number');
-    }
     if (limit) {
       req.cacheKeyPrefix = `${req.cacheKeyPrefix}-l${limit}`;
       if (isNaN(limit)) errors.push('Limit must be a number');
@@ -21,11 +17,14 @@ export default {
       req.cacheKeyPrefix = `${req.cacheKeyPrefix}-p${page}`;
       if (isNaN(page)) errors.push('Page must be a number');
     }
-    if (queryString) {
-      req.cacheKeyPrefix = `${req.cacheKeyPrefix}-q${queryString}`;
+    if (order) {
+      req.cacheKeyPrefix = `${req.cacheKeyPrefix}-o${order}`;
+      if (order !== 'name' && order !== 'category_id') {
+        errors.push('Order must be category_id or name');
+      }
     }
     if (errors.length) {
-      return res.status(400).json(errorResponse(req, res, 400, 'PRD_04', errors, ''));
+      return res.status(400).json(errorResponse(req, res, 400, 'CAT_04', errors, ''));
     }
     next();
   }

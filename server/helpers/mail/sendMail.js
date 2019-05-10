@@ -1,5 +1,4 @@
 import 'dotenv/config';
-// import nodemailer from 'nodemailer';
 import sgMail from '@sendgrid/mail';
 
 /**
