@@ -1,12 +1,17 @@
 import 'dotenv/config';
 import asyncRedis from 'async-redis';
 import Model from '../database/models';
+import emailTemplates from '../helpers/mail/emailTemplates';
+import sendMail from '../helpers/mail/sendMail';
 import errorResponse from '../helpers/errorResponse';
 
 const redisClient = asyncRedis.createClient(process.env.REDIS_URL);
 const {
   Order, OrderDetail, Product, ShoppingCart
 } = Model;
+const {
+  orderTemplateHtml, orderTemplateText
+} = emailTemplates;
 
 /**
  *
@@ -84,6 +89,13 @@ export default class OrderController {
         where: { cart_id: cartId }
       });
       redisClient.del(req.cacheKey);
+      sendMail({
+        from: process.env.MAIL_SENDER,
+        to: req.user.email,
+        subject: 'You Have Created A New Order',
+        text: orderTemplateText(req.user.name, process.env.BASE_URL),
+        html: orderTemplateHtml(req.user.name, process.env.BASE_URL)
+      });
       res.status(200).json({
         orderId: order.order_id
       });
