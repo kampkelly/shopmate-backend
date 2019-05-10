@@ -93,8 +93,18 @@ export default class OrderController {
         from: process.env.MAIL_SENDER,
         to: req.user.email,
         subject: 'You Have Created A New Order',
-        text: orderTemplateText(req.user.name, process.env.BASE_URL),
-        html: orderTemplateHtml(req.user.name, process.env.BASE_URL)
+        text: orderTemplateText(
+          req.user.name,
+          order.dataValues.order_id,
+          totalAmount,
+          process.env.BASE_URL
+        ),
+        html: orderTemplateHtml(
+          req.user.name,
+          order.dataValues.order_id,
+          totalAmount,
+          process.env.BASE_URL
+        )
       });
       res.status(200).json({
         orderId: order.order_id
