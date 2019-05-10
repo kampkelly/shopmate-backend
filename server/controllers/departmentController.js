@@ -43,6 +43,7 @@ export default class DepartmentController {
   static async viewSingleDepartment(req, res) {
     try {
       const { department_id: departmentId } = req.params;
+      if (isNaN(departmentId)) res.status(400).json(errorResponse(req, res, 400, '', 'The ID is not a number.', 'id'));
       const department = await Department.findOne({ where: { department_id: departmentId } });
       if (department) {
         return res.status(200).json(department);
